@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quoteza/Privacy-policy.dart';
+import 'package:quoteza/Terms.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -17,6 +19,17 @@ class _ProfileState extends State<Profile> {
       padding: const EdgeInsets.all(8.0),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+            ),
+            onPressed: () {
+              Navigator.pop(
+                context,
+              );
+            },
+          ),
           automaticallyImplyLeading: true,
           leadingWidth: 30,
           title: Text(
@@ -85,17 +98,294 @@ class _ProfileState extends State<Profile> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       child: CircleAvatar(
-                        radius: 25,
                         backgroundColor: Colors.white,
-                        foregroundImage: AssetImage(
-                          "assets/images/profile.png",
+                        radius: 25,
+                        child: Icon(
+                          Icons.person_rounded,
+                          size: 24,
+                          color: Colors.grey,
                         ),
-                        foregroundColor: Colors.transparent,
                       ),
                     ),
                   ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Profile information',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
                 ],
-              )
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.favorite_outline_outlined,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Favourites',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.abc,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Subscription Plans',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.abc,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Reminders',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.lock_outline_rounded,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Privacy()),
+                        );
+                      },
+                      child: Text(
+                        'Privacy Policy',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Privacy()),
+                        );
+                      },
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
+                ],
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Terms()),
+                  );
+                },
+                child: Container(
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 25,
+                            child: Icon(
+                              Icons.abc,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Terms and conditions',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Terms()),
+                            );
+                          },
+                          icon: Icon(Icons.arrow_forward_ios_rounded,
+                              color: Colors.black, size: 20)),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.help_outline_rounded,
+                          size: 24,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Help centre',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.arrow_forward_ios_rounded,
+                          color: Colors.black, size: 20)),
+                ],
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 25,
+                        child: Icon(
+                          Icons.arrow_right,
+                          size: 24,
+                          color: Colors.indigo.shade600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {},
+                      child: Text(
+                        'Share App',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      )),
+                  Spacer(),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.black,
+                        size: 20,
+                      )),
+                ],
+              ),
             ],
           ),
         ),
