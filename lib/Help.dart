@@ -1,10 +1,10 @@
 //ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
 class Help extends StatefulWidget {
-  const Help({super.key});
+  const Help({Key? key}) : super(key: key);
 
   @override
   State<Help> createState() => _HelpState();
@@ -49,7 +49,8 @@ class _HelpState extends State<Help> {
             key: _formKey,
             onChanged: () {
               setState(() {
-                _isButtonDisabled = !(_formKey.currentState?.validate() ?? false);
+                _isButtonDisabled =
+                    !(_formKey.currentState?.validate() ?? false);
               });
             },
             child: Column(
@@ -112,7 +113,6 @@ class _HelpState extends State<Help> {
                   },
                 ),
                 SizedBox(height: 32),
-                Spacer(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -127,6 +127,9 @@ class _HelpState extends State<Help> {
                         },
                   child: Text('Submit'),
                 ),
+                SizedBox(
+                    height:
+                        32), // Add some space at the bottom for better scrolling
               ],
             ),
           ),

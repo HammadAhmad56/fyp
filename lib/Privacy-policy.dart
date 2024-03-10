@@ -15,6 +15,7 @@ class _PrivacyState extends State<Privacy> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Color(0xFFF7F2EF),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
@@ -37,10 +38,9 @@ class _PrivacyState extends State<Privacy> {
       backgroundColor: Color(0xFFF7F2EF),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               "1. Introduction:",
               style: GoogleFonts.nunito(
@@ -139,8 +139,7 @@ class _PrivacyState extends State<Privacy> {
                   fontSize: 16,
                   color: Colors.black87),
             ),
-          ]
-          ),
+          ]),
         ),
       ),
     );
