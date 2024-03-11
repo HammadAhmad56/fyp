@@ -6,6 +6,7 @@ import 'package:quoteza/Privacy-policy.dart';
 import 'package:quoteza/Profile.dart';
 import 'package:quoteza/Splashscreen.dart';
 import 'package:flutter/services.dart';
+import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
 
 void main() {

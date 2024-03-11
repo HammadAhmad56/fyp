@@ -116,7 +116,7 @@ class _SignupState extends State<Signup> {
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                         icon: Icon(
-                          scureText ? Icons.visibility : Icons.visibility_off,
+                          scureText ? Icons.visibility_off : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -140,8 +140,8 @@ class _SignupState extends State<Signup> {
                       suffixIcon: IconButton(
                         icon: Icon(
                           confirmscureText
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                              ? Icons.visibility_off
+                              : Icons.visibility,
                         ),
                         onPressed: () {
                           setState(() {
@@ -176,53 +176,76 @@ class _SignupState extends State<Signup> {
                       child: Text("Signup"),
                     ),
                   ),
+                  SizedBox(height: 10,),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Divider(height: 1),
-                      Text("or"),
-                      Divider(),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          height: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text("OR"),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          height: 1,
+                        ),
+                      ),
                     ],
                   ),
+                  SizedBox(height: 12,),
                   InkWell(
                     onTap: () {},
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: Color.fromRGBO(46, 59, 75, 1),
                           width: 1.5,
                         ),
                       ),
-                      height: 66,
+                      height: 60,
                       child: Row(
                         children: [
-                          Image.asset("assets/images/google.png"),
-                          Text("\tLogin with Google"),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            height: 32,
+                            width: 32,
+                            child: Image.asset(
+                              "assets/images/google.png",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Text("\t\tLogin with Google"),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 13),
                   InkWell(
                     onTap: () {},
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: Color.fromRGBO(46, 59, 75, 1),
                           width: 1.5,
                         ),
                       ),
-                      height: 66,
+                      height: 60,
                       child: Row(
                         children: [
-                          Image.asset(
-                            "assets/images/apple.png",
-                            height: 29,
-                            width: 30,
+                          SizedBox(
+                            width: 10,
                           ),
-                          Text("\tLogin with Apple"),
+                          Icon(Icons.apple_rounded),
+                          Text("\t\tLogin with Apple"),
                         ],
                       ),
                     ),

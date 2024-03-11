@@ -1,5 +1,5 @@
 // // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,32 +21,33 @@ class _ForgotState extends State<Forgot> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          surfaceTintColor: Color(0xFFF7F2EF),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+            ),
+            onPressed: () {
+              Navigator.pop(
+                context,
+              );
+            },
+          ),
+          automaticallyImplyLeading: true,
+          leadingWidth: 30,
+          title: Text(
+            "Forgot Password ",
+            style:
+                GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
+          ),
+          backgroundColor: Color(0xFFF7F2EF),
+        ),
+        backgroundColor: Color(0xFFF7F2EF),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                    icon: Icon(Icons.arrow_back_ios_new_rounded),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    "Forgot Password",
-                    style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
-              ),
               SizedBox(height: 16),
               Column(
                 children: [

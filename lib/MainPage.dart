@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors,
+// ignore_for_file: prefer_const_constructors, prefer_const_declarations
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/Profile.dart';
+import 'package:quoteza/Subscription.dart';
+import 'package:http/http.dart' as http;
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -14,6 +17,34 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  String quote = '';
+
+  Future<void> fetchQuote() async {
+    final String category = 'inspirational';
+    final String apiKey = 'k5YwnsfH2bYVbHaB3fEDsg==KLeGv9AxjJNj4Jam';
+
+    final response = await http.get(
+      Uri.parse('https://api.api-ninjas.com/v1/quotes?category=$category'),
+      headers: {'X-Api-Key': apiKey},
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      setState(() {
+        quote = responseData[0]
+            ['quote']; // Assuming 'quote' is a property of the quote object
+      });
+    } else {
+      throw Exception('Failed to load quote');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQuote();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -79,7 +110,12 @@ class _MainPageState extends State<MainPage> {
               top: 40,
               right: 20,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Subscription()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   elevation: 0,
@@ -103,14 +139,17 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             Center(
-              child: Text(
-                "Motivation",
-                style: GoogleFonts.nunito(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: quote.isEmpty
+                  ? CircularProgressIndicator()
+                  : Text(
+                      quote,
+                      style: GoogleFonts.nunito(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
             ),
           ],
         ),

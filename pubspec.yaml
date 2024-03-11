@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^4.0.1
   pin_input_text_field: ^4.5.1
   font_awesome_flutter: ^10.7.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

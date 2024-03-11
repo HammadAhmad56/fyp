@@ -18,35 +18,39 @@ class _ResetState extends State<Reset> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          surfaceTintColor: Color(0xFFF7F2EF),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20,
+            ),
+            onPressed: () {
+              Navigator.pop(
+                context,
+              );
+            },
+          ),
+          automaticallyImplyLeading: true,
+          leadingWidth: 30,
+          title: Text(
+            "Reset Password",
+            style:
+                GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
+          ),
+          backgroundColor: Color(0xFFF7F2EF),
+        ),
+        backgroundColor: Color(0xFFF7F2EF),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Container(
-            child: Column(children: [
-              Container(
-                  child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context,
-                            MaterialPageRoute(builder: (context) => Forgot()));
-                      },
-                      icon: Icon(Icons.arrow_back_ios_new_rounded)),
-                  Text(
-                    "Reset Password",
-                    style: GoogleFonts.nunito(color: Colors.black),
-                  ),
-                ],
-              )),
-              Container(
-                child: Column(children: [
-                  Text(
-                    "Please check your email. Enter the forwarded code below.",
-                    style: GoogleFonts.nunito(color: Colors.black),
-                  ),
-                ]),
-              )
-            ]),
-          ),
+          child: Column(children: [
+            Column(children: [
+              Text(
+                "Please check your email. Enter the forwarded code below.",
+                style: GoogleFonts.nunito(color: Colors.black),
+              ),
+            ])
+          ]),
         ),
       ),
     );
