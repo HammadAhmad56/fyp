@@ -40,6 +40,7 @@ dependencies:
   pin_input_text_field: ^4.5.1
   font_awesome_flutter: ^10.7.0
   http: ^1.2.0
+  connectivity_plus: ^5.0.2
 
 dev_dependencies:
   flutter_test:

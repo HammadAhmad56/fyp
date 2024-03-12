@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_declarations
-
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/Profile.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -18,31 +19,77 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String quote = '';
-
-  Future<void> fetchQuote() async {
-    final String category = 'inspirational';
-    final String apiKey = 'k5YwnsfH2bYVbHaB3fEDsg==KLeGv9AxjJNj4Jam';
-
-    final response = await http.get(
-      Uri.parse('https://api.api-ninjas.com/v1/quotes?category=$category'),
-      headers: {'X-Api-Key': apiKey},
-    );
-
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      setState(() {
-        quote = responseData[0]
-            ['quote']; // Assuming 'quote' is a property of the quote object
-      });
-    } else {
-      throw Exception('Failed to load quote');
-    }
-  }
+  bool isLoading = true;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    fetchQuote();
+    _fetchAndSetQuote();
+    _timer = Timer.periodic(Duration(seconds: 30), (timer) {
+      _fetchAndSetQuote();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchAndSetQuote() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final String category = 'inspirational';
+    final String apiKey = 'k5YwnsfH2bYVbHaB3fEDsg==KLeGv9AxjJNj4Jam';
+
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        setState(() {
+          isLoading = false;
+          quote = 'No internet connection';
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('https://api.api-ninjas.com/v1/quotes?category=$category'),
+        headers: {'X-Api-Key': apiKey},
+      ).timeout(Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData is List && responseData.isNotEmpty) {
+          setState(() {
+            isLoading = false;
+            quote = responseData[0]['quote'];
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+            quote = 'Quote not found in response';
+          });
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+          quote = 'Failed to load quotes';
+        });
+      }
+    } on TimeoutException {
+      setState(() {
+        isLoading = false;
+        quote = 'Failed to load quotes (timeout)';
+      });
+    } on Exception catch (e) {
+      setState(() {
+        isLoading = false;
+        quote = 'Error: $e';
+      });
+    }
   }
 
   @override
@@ -138,19 +185,22 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            Center(
-              child: quote.isEmpty
-                  ? CircularProgressIndicator()
-                  : Text(
-                      quote,
-                      style: GoogleFonts.nunito(
-                        fontSize: 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        quote,
+                        style: GoogleFonts.nunito(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-            ),
+                  ),
           ],
         ),
       ),

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quoteza/forgotpassword.dart';
 // import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 class Reset extends StatefulWidget {
