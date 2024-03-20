@@ -5,10 +5,15 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quoteza/Fquote.dart';
 import 'package:quoteza/Profile.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String fq = "";
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -21,10 +26,12 @@ class _MainPageState extends State<MainPage> {
   String quote = '';
   bool isLoading = true;
   late Timer _timer;
+  List<String> favoriteQuotes = [];
 
   @override
   void initState() {
     super.initState();
+    _loadFavorites();
     _fetchAndSetQuote();
     _timer = Timer.periodic(Duration(seconds: 30), (timer) {
       _fetchAndSetQuote();
@@ -92,6 +99,40 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  void _addToFavorites() async {
+    if (!favoriteQuotes.contains(quote)) {
+      setState(() {
+        favoriteQuotes.add(quote);
+        favoriteQuotes = [...favoriteQuotes, quote];
+        Provider.of<FavoriteQuotes>(context, listen: false).add(quote);
+      });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('favoriteQuotes', favoriteQuotes);
+      // snack bar message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Quote added to favorites!'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else {
+      // If the quote is already in favorites, show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Quote already in favorites!'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  void _loadFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      favoriteQuotes = prefs.getStringList('favoriteQuotes') ?? [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -116,9 +157,10 @@ class _MainPageState extends State<MainPage> {
                   IconButton(
                     onPressed: () {
                       // Handle heart button press
+                      _addToFavorites();
                     },
                     icon: Icon(
-                      Icons.favorite_border_rounded,
+                      Icons.favorite_rounded,
                       color: Colors.white,
                       size: 30,
                     ),
@@ -126,7 +168,7 @@ class _MainPageState extends State<MainPage> {
                   SizedBox(width: 20),
                   IconButton(
                     onPressed: () {
-                      // Handle favorite button press
+                      // Handle load button press
                     },
                     icon: Icon(
                       Icons.file_download_outlined,
@@ -164,7 +206,7 @@ class _MainPageState extends State<MainPage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Color(0xFFF7F2EF),
                   elevation: 0,
                   textStyle: TextStyle(fontSize: 16, color: Colors.black),
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -180,13 +222,16 @@ class _MainPageState extends State<MainPage> {
                 ),
                 label: Text(
                   "Premium",
-                  style: GoogleFonts.nunito(
+                  style: GoogleFonts.nunitoSans(
                       fontWeight: FontWeight.bold, fontSize: 15),
                 ),
               ),
             ),
             isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? Center(
+                    child: CircularProgressIndicator(
+                    color: Color(0xFFF7F2EF),
+                  ))
                 : Center(
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -194,10 +239,12 @@ class _MainPageState extends State<MainPage> {
                         quote,
                         style: GoogleFonts.nunito(
                           fontSize: 24,
-                          color: Colors.white,
+                          color: Color(0xFFF7F2EF),
                           fontWeight: FontWeight.bold,
                         ),
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
+                        maxLines: 5,
                       ),
                     ),
                   ),

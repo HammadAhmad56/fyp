@@ -1,13 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
-import 'package:quoteza/Help.dart';
+
+
 import 'package:quoteza/MainPage.dart';
-import 'package:quoteza/Privacy-policy.dart';
-import 'package:quoteza/Profile.dart';
-import 'package:quoteza/Splashscreen.dart';
 import 'package:flutter/services.dart';
-import 'package:quoteza/Subscription.dart';
-import 'package:quoteza/Terms.dart';
+import 'package:provider/provider.dart';
+import 'Fquote.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,14 +19,17 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F2EF)),
-        primaryColor: Color(0xFFF7F2EF),
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (context) => FavoriteQuotes(),
+      child: MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F2EF)),
+          primaryColor: Color(0xFFF7F2EF),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: MainPage(),
       ),
-      debugShowCheckedModeBanner: false,
-      home: MainPage(),
     );
   }
 }

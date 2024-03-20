@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quoteza/Favourites.dart';
 import 'package:quoteza/Help.dart';
 import 'package:quoteza/P-info.dart';
 import 'package:quoteza/Privacy-policy.dart';
@@ -45,6 +46,10 @@ class _ProfileState extends State<Profile> {
         ),
         body: SingleChildScrollView(
           child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.white, Colors.black, Colors.green],
+                    begin: Alignment.topCenter)),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -138,39 +143,45 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 25,
-                          child: Icon(
-                            Icons.favorite_outline_outlined,
-                            size: 24,
-                            color: Colors.grey,
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FavoriteScreen()),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 25,
+                            child: Icon(
+                              Icons.favorite_outline_outlined,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                        onTap: () {},
-                        child: Text(
-                          'Favourites',
-                          style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w500, fontSize: 16),
-                        )),
-                    Spacer(),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.arrow_forward_ios_rounded,
-                            color: Colors.black, size: 20)),
-                  ],
+                      Text(
+                        'Favourites',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.arrow_forward_ios_rounded,
+                              color: Colors.black, size: 20)),
+                    ],
+                  ),
                 ),
                 Row(
                   children: [
