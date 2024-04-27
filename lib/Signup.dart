@@ -2,6 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/login.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -53,6 +57,34 @@ class _SignupState extends State<Signup> {
 
   bool _isFormValid() {
     return _formKey.currentState?.validate() ?? false;
+  }
+
+  Future<bool> _isAndroidDevice() async {
+    if (kIsWeb) {
+      return false; // Return false if running in a web environment
+    } else {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      try {
+        if (Platform.isAndroid) {
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          return true; // Return true if the device is running Android
+        } else {
+          return false; // Return false if the device is not running Android
+        }
+      } on PlatformException {
+        return false; // Return false if an exception occurs (e.g., device info not available)
+      }
+    }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 1),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
@@ -176,7 +208,9 @@ class _SignupState extends State<Signup> {
                       child: Text("Signup"),
                     ),
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -197,7 +231,9 @@ class _SignupState extends State<Signup> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(
+                    height: 12,
+                  ),
                   InkWell(
                     onTap: () {},
                     child: Container(
@@ -229,7 +265,13 @@ class _SignupState extends State<Signup> {
                   ),
                   SizedBox(height: 13),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      if (await _isAndroidDevice()) {
+                        _showMessage(
+                            context, "Apple Login is not available on Android");
+                      } else {}
+                      ;
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),

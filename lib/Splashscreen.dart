@@ -18,26 +18,29 @@ class Splashscreen extends StatelessWidget {
     });
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          color: Color(0xFFF7F2EF),
-          // width: double.infinity,
-          // height: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 60,
-              ),
-              Image.asset("assets/images/splashicon.png"),
-              Text(
-                "A LOVE NOTE FROM \n      UNIVERSE",
-                style: TextStyle(color: Colors.black),
-              ),
-              SizedBox(height: 50),
-              Image.asset(
-                "assets/images/splash.png",
-              ),
-            ],
+        body: PopScope(
+          canPop: false,
+          child: Container(
+            color: Color(0xFFF7F2EF),
+            // width: double.infinity,
+            // height: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 60,
+                ),
+                Image.asset("assets/images/splashicon.png"),
+                Text(
+                  "A LOVE NOTE FROM \n      UNIVERSE",
+                  style: TextStyle(color: Colors.black),
+                ),
+                SizedBox(height: 50),
+                Image.asset(
+                  "assets/images/splash.png",
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,8 +6,9 @@ import 'package:quoteza/Favourites.dart';
 import 'package:quoteza/Help.dart';
 import 'package:quoteza/P-info.dart';
 import 'package:quoteza/Privacy-policy.dart';
+import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
-// import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -48,8 +49,8 @@ class _ProfileState extends State<Profile> {
           child: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.white, Colors.black, Colors.green],
-                    begin: Alignment.topCenter)),
+                    colors: [Colors.white, Colors.white, Colors.white],
+                    begin: Alignment.bottomLeft)),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -183,39 +184,51 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 25,
-                          child: Icon(
-                            Icons.abc,
-                            size: 24,
-                            color: Colors.grey,
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Subscription()),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 25,
+                            child: Icon(
+                              Icons.abc,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                        onTap: () {},
-                        child: Text(
-                          'Subscription Plans',
-                          style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w500, fontSize: 16),
-                        )),
-                    Spacer(),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.arrow_forward_ios_rounded,
-                            color: Colors.black, size: 20)),
-                  ],
+                      Text(
+                        'Subscription Plans',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Subscription()),
+                            );
+                          },
+                          icon: Icon(Icons.arrow_forward_ios_rounded,
+                              color: Colors.black, size: 20)),
+                    ],
+                  ),
                 ),
                 Row(
                   children: [
@@ -385,44 +398,47 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 25,
-                          child: Icon(
-                            Icons.arrow_right,
-                            size: 24,
-                            color: Colors.indigo.shade600,
+                InkWell(
+                  onTap: () {
+                    Share.share('Hi this is my App');
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 25,
+                            child: Icon(
+                              Icons.arrow_right,
+                              size: 24,
+                              color: Colors.indigo.shade600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                        onTap: () {},
-                        child: Text(
-                          'Share App',
-                          style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w500, fontSize: 16),
-                        )),
-                    Spacer(),
-                    IconButton(
-                        onPressed: () {
-                          // Share.share("This is my app");
-                        },
-                        icon: Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          color: Colors.black,
-                          size: 20,
-                        )),
-                  ],
+                      Text(
+                        'Share App',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {
+                            // Share.share("This is my app");
+                          },
+                          icon: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.black,
+                            size: 20,
+                          )),
+                    ],
+                  ),
                 ),
                 InkWell(
                   onTap: () {},

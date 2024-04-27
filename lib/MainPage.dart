@@ -11,6 +11,7 @@ import 'package:quoteza/Subscription.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String fq = "";
@@ -100,26 +101,49 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _addToFavorites() async {
-    if (!favoriteQuotes.contains(quote)) {
-      setState(() {
-        favoriteQuotes.add(quote);
-        favoriteQuotes = [...favoriteQuotes, quote];
-        Provider.of<FavoriteQuotes>(context, listen: false).add(quote);
-      });
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('favoriteQuotes', favoriteQuotes);
-      // snack bar message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Quote added to favorites!'),
-          duration: Duration(seconds: 1),
-        ),
-      );
+    if (quote != null && quote.isNotEmpty && !favoriteQuotes.contains(quote)) {
+      if (!quote.contains('Failed to load quotes') &&
+          !quote.contains('Failed to load quotes (timeout)') &&
+          !quote.contains('No internet connection') &&
+          !quote.contains('Error')) {
+        setState(() {
+          favoriteQuotes.add(quote);
+          favoriteQuotes = [...favoriteQuotes, quote];
+          Provider.of<FavoriteQuotes>(context, listen: false).add(quote);
+        });
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setStringList('favoriteQuotes', favoriteQuotes);
+        // snack bar message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text('Quote added to favorites!'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else if (favoriteQuotes.contains(quote)) {
+        // If the quote is already in favorites, show a snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Quote already in favorites!'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Error: Cannot add this quote to favorites!'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
     } else {
-      // If the quote is already in favorites, show a snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Quote already in favorites!'),
+          backgroundColor: Colors.red,
+          content: Text('Quote is invalid or already in favorites!'),
           duration: Duration(seconds: 1),
         ),
       );
@@ -139,116 +163,124 @@ class _MainPageState extends State<MainPage> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ));
-
-    return Scrollbar(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(
-              "assets/images/home.jpg",
-              fit: BoxFit.cover,
-            ),
-            Positioned(
-              bottom: 200,
-              left: 128,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      // Handle heart button press
-                      _addToFavorites();
-                    },
-                    icon: Icon(
-                      Icons.favorite_rounded,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  IconButton(
-                    onPressed: () {
-                      // Handle load button press
-                    },
-                    icon: Icon(
-                      Icons.file_download_outlined,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                ],
+    String sharing =
+        "Hi this is my app check that's awesome quote \n\n*$quote*\nThis is my application check out ";
+    return PopScope(
+      canPop: false,
+      child: Scrollbar(
+        child: Scaffold(
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                "assets/images/home.jpg",
+                fit: BoxFit.cover,
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: IconButton(
-                onPressed: () {
-                  // Handle profile button press
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Profile()));
-                },
-                icon: Icon(
-                  Icons.account_circle_outlined,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 40,
-              right: 20,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Subscription()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFF7F2EF),
-                  elevation: 0,
-                  textStyle: TextStyle(fontSize: 16, color: Colors.black),
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: Colors.white),
-                  ),
-                ),
-                icon: Icon(
-                  FontAwesomeIcons.crown,
-                  size: 16,
-                  color: Colors.black,
-                ),
-                label: Text(
-                  "Premium",
-                  style: GoogleFonts.nunitoSans(
-                      fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-              ),
-            ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                    color: Color(0xFFF7F2EF),
-                  ))
-                : Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        quote,
-                        style: GoogleFonts.nunito(
-                          fontSize: 24,
-                          color: Color(0xFFF7F2EF),
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        maxLines: 5,
+              Positioned(
+                bottom: 200,
+                left: 128,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        // Handle heart button press
+                        _addToFavorites();
+                      },
+                      icon: Icon(
+                        Icons.favorite_rounded,
+                        color: Colors.white,
+                        size: 30,
                       ),
                     ),
+                    SizedBox(width: 20),
+                    IconButton(
+                      onPressed: () {
+                        // Handle load button press
+                        Share.share(
+                          sharing,
+                          subject: "Motivational quote app",
+                        );
+                      },
+                      icon: Icon(
+                        Icons.file_download_outlined,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: IconButton(
+                  onPressed: () {
+                    // Handle profile button press
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Profile()));
+                  },
+                  icon: Icon(
+                    Icons.account_circle_outlined,
+                    color: Colors.white,
+                    size: 30,
                   ),
-          ],
+                ),
+              ),
+              Positioned(
+                top: 40,
+                right: 20,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Subscription()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFF7F2EF),
+                    elevation: 0,
+                    textStyle: TextStyle(fontSize: 16, color: Colors.black),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  icon: Icon(
+                    FontAwesomeIcons.crown,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  label: Text(
+                    "Premium",
+                    style: GoogleFonts.nunitoSans(
+                        fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                ),
+              ),
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                      color: Color(0xFFF7F2EF),
+                    ))
+                  : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          quote,
+                          style: GoogleFonts.nunito(
+                            fontSize: 24,
+                            color: Color(0xFFF7F2EF),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          maxLines: 5,
+                        ),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

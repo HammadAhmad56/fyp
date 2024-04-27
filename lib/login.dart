@@ -4,6 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/MainPage.dart';
 import 'package:quoteza/Signup.dart';
 import 'package:quoteza/forgotpassword.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 
 void main() {
   runApp(const MyApp());
@@ -33,237 +37,272 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   bool isButtonEnabled = false;
 
+  Future<bool> _isAndroidDevice() async {
+    if (kIsWeb) {
+      return false; // Return false if running in a web environment
+    } else {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      try {
+        if (Platform.isAndroid) {
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          return true; // Return true if the device is running Android
+        } else {
+          return false; // Return false if the device is not running Android
+        }
+      } on PlatformException {
+        return false; // Return false if an exception occurs (e.g., device info not available)
+      }
+    }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 1),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      scrollbarOrientation: ScrollbarOrientation.top,
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Color(0xFFF7F2EF),
-          resizeToAvoidBottomInset: false,
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      child: Text(
-                        "Login to your account",
-                        style: GoogleFonts.nunito(
-                            fontSize: 26, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    Container(
-                        child: Text(
-                      "Enter Your Login Information",
-                      style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54),
-                    )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: emailController,
-                        validator: (value) => _validateEmail(value),
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          setState(() {
-                            isButtonEnabled = _isFormValid();
-                          });
-                        },
-                        decoration: InputDecoration(
-                            hintText: "Email",
-                            prefixIcon: Icon(Icons.email_outlined),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: passwordController,
-                        validator: (value) => value == null || value.isEmpty
-                            ? "Password is Required"
-                            : null,
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: scureText,
-                        onChanged: (value) {
-                          setState(() {
-                            isButtonEnabled = _isFormValid();
-                          });
-                        },
-                        decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                scureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  scureText = !scureText; //eye button logic
-                                });
-                              },
-                            ),
-                            hintText: "Password",
-                            prefixIcon: Icon(Icons.key_rounded),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          child: Text("Forgot Password?"),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Forgot()),
-                            );
-                          },
-                        )),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(9),
-                      child: ElevatedButton(
-                        onPressed: isButtonEnabled
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MainPage()),
-                                );
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                            foregroundColor: Colors.white),
-                        child: Text("Login"),
-                      ),
-                    ),
-                    Container(
+    return PopScope(
+      canPop: false,
+      child: Scrollbar(
+        scrollbarOrientation: ScrollbarOrientation.top,
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: Color(0xFFF7F2EF),
+            resizeToAvoidBottomInset: false,
+            body: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
                         height: 20,
-                        // color: Colors.red,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: Colors.grey,
-                                height: 1,
+                      ),
+                      Container(
+                        child: Text(
+                          "Login to your account",
+                          style: GoogleFonts.nunito(
+                              fontSize: 26, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Container(
+                          child: Text(
+                        "Enter Your Login Information",
+                        style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54),
+                      )),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        child: TextFormField(
+                          controller: emailController,
+                          validator: (value) => _validateEmail(value),
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (value) {
+                            setState(() {
+                              isButtonEnabled = _isFormValid();
+                            });
+                          },
+                          decoration: InputDecoration(
+                              hintText: "Email",
+                              prefixIcon: Icon(Icons.email_outlined),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Container(
+                        child: TextFormField(
+                          controller: passwordController,
+                          validator: (value) => value == null || value.isEmpty
+                              ? "Password is Required"
+                              : null,
+                          keyboardType: TextInputType.visiblePassword,
+                          obscureText: scureText,
+                          onChanged: (value) {
+                            setState(() {
+                              isButtonEnabled = _isFormValid();
+                            });
+                          },
+                          decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  scureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    scureText = !scureText; //eye button logic
+                                  });
+                                },
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Text("OR"),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: Colors.grey,
-                                height: 1,
+                              hintText: "Password",
+                              prefixIcon: Icon(Icons.key_rounded),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            child: Text("Forgot Password?"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Forgot()),
+                              );
+                            },
+                          )),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(9),
+                        child: ElevatedButton(
+                          onPressed: isButtonEnabled
+                              ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MainPage()),
+                                  );
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                              foregroundColor: Colors.white),
+                          child: Text("Login"),
+                        ),
+                      ),
+                      Container(
+                          height: 20,
+                          // color: Colors.red,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.grey,
+                                  height: 1,
+                                ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text("OR"),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  color: Colors.grey,
+                                  height: 1,
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 12),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Color.fromRGBO(46, 59, 75, 1),
+                              width: 1.5,
                             ),
-                          ],
-                        )),
-                    SizedBox(height: 12),
-                    InkWell(
-                      
-                      onTap: () {},
-                      child: Container(
-                        
-                        decoration: BoxDecoration(
-                          
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Color.fromRGBO(46, 59, 75, 1),
-                            width: 1.5,
+                          ),
+                          height: 60,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                height: 32,
+                                width: 32,
+                                child: Image.asset(
+                                  "assets/images/google.png",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Text("\t\tLogin with Google"),
+                            ],
                           ),
                         ),
-                        height: 60,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 32,
-                              width: 32,
-                              child: Image.asset(
-                                "assets/images/google.png",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Text("\t\tLogin with Google"),
-                          ],
-                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 13,
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Color.fromRGBO(46, 59, 75, 1),
-                            width: 1.5,
+                      SizedBox(
+                        height: 13,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          if (await _isAndroidDevice()) {
+                            _showMessage(context,
+                                "Apple Login is not available on Android");
+                          } else {}
+                          ;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Color.fromRGBO(46, 59, 75, 1),
+                              width: 1.5,
+                            ),
+                          ),
+                          height: 60,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.apple_rounded,
+                                size: 32,
+                              ),
+                              Text("\t\tLogin with Apple"),
+                            ],
                           ),
                         ),
-                        height: 60,
+                      ),
+                      Container(
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              Icons.apple_rounded,
-                              size: 32,
-                            ),
-                            Text("\t\tLogin with Apple"),
+                            Text("Don't have an account?",
+                                style: GoogleFonts.nunito(
+                                  color: Colors.black,
+                                )),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Signup()),
+                                  );
+                                },
+                                child: Text(
+                                  "Signup",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ))
                           ],
                         ),
-                      ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Don't have an account?",
-                              style: GoogleFonts.nunito(
-                                color: Colors.black,
-                              )),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Signup()),
-                                );
-                              },
-                              child: Text(
-                                "Signup",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ))
-                        ],
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
