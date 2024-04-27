@@ -2,9 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/login.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 
 class Signup extends StatefulWidget {
@@ -60,20 +57,10 @@ class _SignupState extends State<Signup> {
   }
 
   Future<bool> _isAndroidDevice() async {
-    if (kIsWeb) {
-      return false; // Return false if running in a web environment
+    if (Platform.isAndroid) {
+      return true; // Return true if the device is running Android
     } else {
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      try {
-        if (Platform.isAndroid) {
-          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-          return true; // Return true if the device is running Android
-        } else {
-          return false; // Return false if the device is not running Android
-        }
-      } on PlatformException {
-        return false; // Return false if an exception occurs (e.g., device info not available)
-      }
+      return false; // Return false for all other platforms
     }
   }
 

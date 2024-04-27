@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _addToFavorites() async {
-    if (quote != null && quote.isNotEmpty && !favoriteQuotes.contains(quote)) {
+    if (quote.isNotEmpty && !favoriteQuotes.contains(quote)) {
       if (!quote.contains('Failed to load quotes') &&
           !quote.contains('Failed to load quotes (timeout)') &&
           !quote.contains('No internet connection') &&
