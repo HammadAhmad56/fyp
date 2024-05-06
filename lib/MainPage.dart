@@ -107,6 +107,7 @@ class _MainPageState extends State<MainPage> {
           !quote.contains('No internet connection') &&
           !quote.contains('Error')) {
         setState(() {
+          !favoriteQuotes.contains(quote);
           favoriteQuotes.add(quote);
           favoriteQuotes = [...favoriteQuotes, quote];
           Provider.of<FavoriteQuotes>(context, listen: false).add(quote);
@@ -213,16 +214,27 @@ class _MainPageState extends State<MainPage> {
               Positioned(
                 bottom: 20,
                 right: 20,
-                child: IconButton(
-                  onPressed: () {
-                    // Handle profile button press
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Profile()));
-                  },
-                  icon: Icon(
-                    Icons.account_circle_outlined,
+                child: Container(
+                  width: 50, // Adjust the width and height to make it square
+                  height: 50,
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    size: 30,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(
+                        8), // Adjust the radius for rounded corners if needed
+                  ),
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    onPressed: () {
+                      // Handle profile button press
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Profile()));
+                    },
+                    icon: Icon(
+                      Icons.account_circle_outlined,
+                      color: Colors.black, // Adjust icon color if needed
+                      size: 30,
+                    ),
                   ),
                 ),
               ),

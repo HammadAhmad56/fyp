@@ -39,35 +39,57 @@ class FavoriteScreen extends StatelessWidget {
         ),
       ),
       backgroundColor: Color(0xFFF7F2EF),
-      body: ListView.builder(
-        itemCount: favoriteQuotes.length,
-        itemBuilder: (context, index) {
-          final quote = favoriteQuotes[index];
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            color: Colors.green,
-            margin: EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text(
-                quote,
-                style: GoogleFonts.nunito(),
+      body: favoriteQuotes.isEmpty
+          ? Center(
+              child: Text(
+                "Nothing in favorites",
+                style: GoogleFonts.nunito(
+                    fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: Colors.pink.shade300,
-                ),
-                onPressed: () {
-                  // Remove the quote from favorites when the heart button is pressed
-                  favoriteQuotesProvider.remove(index);
-                },
-              ),
+            )
+          : ListView.builder(
+              itemCount: favoriteQuotes.length,
+              itemBuilder: (context, index) {
+                final quote = favoriteQuotes[index];
+                return Container(
+                  margin: EdgeInsets.all(10.0),
+                  height: 180,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: const DecorationImage(
+                        image: AssetImage(
+                          "assets/images/home.jpg",
+                        ),
+                        fit: BoxFit.cover,
+                      )),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    color: Colors.transparent,
+                    margin: EdgeInsets.all(10.0),
+                    child: ListTile(
+                      title: Text(
+                        quote,
+                        style: GoogleFonts.nunito(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          // Remove the quote from favorites when the heart button is pressed
+                          favoriteQuotesProvider.remove(index);
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

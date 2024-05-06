@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/Favourites.dart';
 import 'package:quoteza/Help.dart';
 import 'package:quoteza/P-info.dart';
 import 'package:quoteza/Privacy-policy.dart';
+import 'package:quoteza/Reminder.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
 import 'package:share_plus/share_plus.dart';
@@ -48,9 +50,11 @@ class _ProfileState extends State<Profile> {
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.white, Colors.white, Colors.white],
-                    begin: Alignment.bottomLeft)),
+                gradient: LinearGradient(colors: [
+              Color(0xFFF7F2EF),
+              Colors.white,
+              Color(0xFFF7F2EF)
+            ], begin: Alignment.bottomLeft)),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -204,7 +208,7 @@ class _ProfileState extends State<Profile> {
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
-                              Icons.abc,
+                              Icons.workspace_premium_outlined,
                               size: 24,
                               color: Colors.grey,
                             ),
@@ -243,7 +247,7 @@ class _ProfileState extends State<Profile> {
                           backgroundColor: Colors.white,
                           radius: 25,
                           child: Icon(
-                            Icons.abc,
+                            Icons.add_alert,
                             size: 24,
                             color: Colors.grey,
                           ),
@@ -251,7 +255,12 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Reminder()));
+                        },
                         child: Text(
                           'Reminders',
                           style: GoogleFonts.nunito(
@@ -331,7 +340,7 @@ class _ProfileState extends State<Profile> {
                               backgroundColor: Colors.white,
                               radius: 25,
                               child: Icon(
-                                Icons.abc,
+                                Icons.assignment,
                                 size: 24,
                                 color: Colors.grey,
                               ),
@@ -415,9 +424,9 @@ class _ProfileState extends State<Profile> {
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
-                              Icons.arrow_right,
+                              Icons.share,
+                              color: Colors.grey,
                               size: 24,
-                              color: Colors.indigo.shade600,
                             ),
                           ),
                         ),
@@ -477,6 +486,17 @@ class _ProfileState extends State<Profile> {
                 ),
               ],
             ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          height: 60,
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                foregroundColor: Colors.white),
+            child: Text("Logout"),
           ),
         ),
       ),

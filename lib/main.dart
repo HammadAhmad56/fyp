@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quoteza/MainPage.dart';
 import 'package:quoteza/Splashscreen.dart';
 import 'Fquote.dart';
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: Splashscreen(),
+        home: MainPage(),
       ),
     );
   }
