@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/MainPage.dart';
 import 'package:quoteza/Signup.dart';
 import 'package:quoteza/forgotpassword.dart';
 import 'dart:io' show Platform;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,6 +54,43 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void signInWithEmailAndPassword() async {
+    try {
+      final String email = emailController.text.trim();
+      final String password = passwordController.text.trim();
+
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage()),
+        );
+        // Navigate to another screen after successful login
+        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnotherScreen()));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Enter the correct Email or Password!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      print('Error signing in: $e');
+      // Handle sign-in errors here
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -62,233 +101,242 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Scaffold(
             backgroundColor: Color(0xFFF7F2EF),
             resizeToAvoidBottomInset: false,
-            body: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        child: Text(
-                          "Login to your account",
-                          style: GoogleFonts.nunito(
-                              fontSize: 26, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Container(
-                          child: Text(
-                        "Enter Your Login Information",
-                        style: GoogleFonts.nunito(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54),
-                      )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        child: TextFormField(
-                          controller: emailController,
-                          validator: (value) => _validateEmail(value),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            setState(() {
-                              isButtonEnabled = _isFormValid();
-                            });
-                          },
-                          decoration: InputDecoration(
-                              hintText: "Email",
-                              prefixIcon: Icon(Icons.email_outlined),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Container(
-                        child: TextFormField(
-                          controller: passwordController,
-                          validator: (value) => value == null || value.isEmpty
-                              ? "Password is Required"
-                              : null,
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: scureText,
-                          onChanged: (value) {
-                            setState(() {
-                              isButtonEnabled = _isFormValid();
-                            });
-                          },
-                          decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  scureText
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    scureText = !scureText; //eye button logic
-                                  });
-                                },
-                              ),
-                              hintText: "Password",
-                              prefixIcon: Icon(Icons.key_rounded),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12))),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
-                            child: Text("Forgot Password?"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Forgot()),
-                              );
-                            },
-                          )),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(9),
-                        child: ElevatedButton(
-                          onPressed: isButtonEnabled
-                              ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MainPage()),
-                                  );
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                              foregroundColor: Colors.white),
-                          child: Text("Login"),
-                        ),
-                      ),
-                      Container(
+            body: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                Color(0xFFF7F2EF),
+                Colors.white,
+                Color(0xFFF7F2EF)
+              ], begin: Alignment.bottomLeft)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
                           height: 20,
-                          // color: Colors.red,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 1,
+                        ),
+                        Container(
+                          child: Text(
+                            "Login to your account",
+                            style: GoogleFonts.nunito(
+                                fontSize: 26, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Container(
+                            child: Text(
+                          "Enter Your Login Information",
+                          style: GoogleFonts.nunito(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54),
+                        )),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: emailController,
+                            validator: (value) => _validateEmail(value),
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {
+                              setState(() {
+                                isButtonEnabled = _isFormValid();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                hintText: "Email",
+                                prefixIcon: Icon(Icons.email_outlined),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12))),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: passwordController,
+                            validator: (value) => value == null || value.isEmpty
+                                ? "Password is Required"
+                                : null,
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: scureText,
+                            onChanged: (value) {
+                              setState(() {
+                                isButtonEnabled = _isFormValid();
+                              });
+                            },
+                            decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    scureText
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      scureText = !scureText; //eye button logic
+                                    });
+                                  },
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Text("OR"),
-                              ),
-                              Expanded(
-                                child: Divider(
-                                  color: Colors.grey,
-                                  height: 1,
+                                hintText: "Password",
+                                prefixIcon: Icon(Icons.key_rounded),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12))),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                            alignment: Alignment.centerRight,
+                            child: InkWell(
+                              child: Text("Forgot Password?"),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Forgot()),
+                                );
+                              },
+                            )),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(9),
+                          child: ElevatedButton(
+                            onPressed: isButtonEnabled
+                                ? () {
+                                    signInWithEmailAndPassword();
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) => MainPage()),
+                                    // );
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                                foregroundColor: Colors.white),
+                            child: Text("Login"),
+                          ),
+                        ),
+                        Container(
+                            height: 20,
+                            // color: Colors.red,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                    height: 1,
+                                  ),
                                 ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  child: Text("OR"),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey,
+                                    height: 1,
+                                  ),
+                                ),
+                              ],
+                            )),
+                        SizedBox(height: 12),
+                        InkWell(
+                          onTap: () {},
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Color.fromRGBO(46, 59, 75, 1),
+                                width: 1.5,
                               ),
-                            ],
-                          )),
-                      SizedBox(height: 12),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Color.fromRGBO(46, 59, 75, 1),
-                              width: 1.5,
+                            ),
+                            height: 60,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  height: 32,
+                                  width: 32,
+                                  child: Image.asset(
+                                    "assets/images/google.png",
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Text("\t\tLogin with Google"),
+                              ],
                             ),
                           ),
-                          height: 60,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 10,
-                              ),
-                              SizedBox(
-                                height: 32,
-                                width: 32,
-                                child: Image.asset(
-                                  "assets/images/google.png",
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Text("\t\tLogin with Google"),
-                            ],
-                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 13,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          if (await _isAndroidDevice()) {
-                            _showMessage(context,
-                                "Apple Login is not available on Android");
-                          } else {}
-                          ;
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Color.fromRGBO(46, 59, 75, 1),
-                              width: 1.5,
+                        SizedBox(
+                          height: 13,
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (await _isAndroidDevice()) {
+                              _showMessage(context,
+                                  "Apple Login is not available on Android");
+                            } else {}
+                            ;
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Color.fromRGBO(46, 59, 75, 1),
+                                width: 1.5,
+                              ),
+                            ),
+                            height: 60,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.apple_rounded,
+                                  size: 32,
+                                ),
+                                Text("\t\tLogin with Apple"),
+                              ],
                             ),
                           ),
-                          height: 60,
+                        ),
+                        Container(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                Icons.apple_rounded,
-                                size: 32,
-                              ),
-                              Text("\t\tLogin with Apple"),
+                              Text("Don't have an account?",
+                                  style: GoogleFonts.nunito(
+                                    color: Colors.black,
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Signup()),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Signup",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ))
                             ],
                           ),
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Don't have an account?",
-                                style: GoogleFonts.nunito(
-                                  color: Colors.black,
-                                )),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Signup()),
-                                  );
-                                },
-                                child: Text(
-                                  "Signup",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ))
-                          ],
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

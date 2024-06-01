@@ -170,128 +170,137 @@ class _MainPageState extends State<MainPage> {
       canPop: false,
       child: Scrollbar(
         child: Scaffold(
-          body: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                "assets/images/home.jpg",
-                fit: BoxFit.cover,
-              ),
-              Positioned(
-                bottom: 200,
-                left: 128,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Handle heart button press
-                        _addToFavorites();
-                      },
-                      icon: Icon(
-                        Icons.favorite_rounded,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    IconButton(
-                      onPressed: () {
-                        // Handle load button press
-                        Share.share(
-                          sharing,
-                          subject: "Motivational quote app",
-                        );
-                      },
-                      icon: Icon(
-                        Icons.file_download_outlined,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ],
+          body: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: const [
+              Color(0xFFF7F2EF),
+              Colors.white,
+              Color(0xFFF7F2EF)
+            ], begin: Alignment.bottomLeft)),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  "assets/images/home.jpg",
+                  fit: BoxFit.cover,
                 ),
-              ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Container(
-                  width: 50, // Adjust the width and height to make it square
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(
-                        8), // Adjust the radius for rounded corners if needed
-                  ),
-                  child: IconButton(
-                    alignment: Alignment.center,
-                    onPressed: () {
-                      // Handle profile button press
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Profile()));
-                    },
-                    icon: Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.black, // Adjust icon color if needed
-                      size: 30,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40,
-                right: 20,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Subscription()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFF7F2EF),
-                    elevation: 0,
-                    textStyle: TextStyle(fontSize: 16, color: Colors.black),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: Colors.white),
-                    ),
-                  ),
-                  icon: Icon(
-                    FontAwesomeIcons.crown,
-                    size: 16,
-                    color: Colors.black,
-                  ),
-                  label: Text(
-                    "Premium",
-                    style: GoogleFonts.nunitoSans(
-                        fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                ),
-              ),
-              isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      color: Color(0xFFF7F2EF),
-                    ))
-                  : Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          quote,
-                          style: GoogleFonts.nunito(
-                            fontSize: 24,
-                            color: Color(0xFFF7F2EF),
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          maxLines: 5,
+                Positioned(
+                  bottom: 200,
+                  left: 128,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          // Handle heart button press
+                          _addToFavorites();
+                        },
+                        icon: Icon(
+                          Icons.favorite_rounded,
+                          color: Colors.white,
+                          size: 30,
                         ),
                       ),
+                      SizedBox(width: 20),
+                      IconButton(
+                        onPressed: () {
+                          // Handle load button press
+                          Share.share(
+                            sharing,
+                            subject: "Motivational quote app",
+                          );
+                        },
+                        icon: Icon(
+                          Icons.file_download_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: Container(
+                    width: 50, // Adjust the width and height to make it square
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(
+                          8), // Adjust the radius for rounded corners if needed
                     ),
-            ],
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      onPressed: () {
+                        // Handle profile button press
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Profile()));
+                      },
+                      icon: Icon(
+                        Icons.account_circle_outlined,
+                        color: Colors.black, // Adjust icon color if needed
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Subscription()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFF7F2EF),
+                      elevation: 0,
+                      textStyle: TextStyle(fontSize: 16, color: Colors.black),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: Colors.white),
+                      ),
+                    ),
+                    icon: Icon(
+                      FontAwesomeIcons.crown,
+                      size: 16,
+                      color: Colors.black,
+                    ),
+                    label: Text(
+                      "Premium",
+                      style: GoogleFonts.nunitoSans(
+                          fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                  ),
+                ),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: Color(0xFFF7F2EF),
+                      ))
+                    : Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            quote,
+                            style: GoogleFonts.nunito(
+                              fontSize: 24,
+                              color: Color(0xFFF7F2EF),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            maxLines: 5,
+                          ),
+                        ),
+                      ),
+              ],
+            ),
           ),
         ),
       ),

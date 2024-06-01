@@ -36,68 +36,76 @@ class _PinfoState extends State<Pinfo> {
         backgroundColor: Color(0xFFF7F2EF),
       ),
       backgroundColor: Color(0xFFF7F2EF),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextFormField(
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  hintText: "Name",
-                  prefixIcon: Icon(Icons.person_rounded),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  hintText: "Phone",
-                  prefixIcon: Icon(Icons.phone_android),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.black,
-                      ),
-                    ),
-                    child: Text(
-                      'Save Changes',
-                      style: GoogleFonts.nunito(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: const [
+          Color(0xFFF7F2EF),
+          Colors.white,
+          Color(0xFFF7F2EF)
+        ], begin: Alignment.bottomLeft)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextFormField(
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    hintText: "Name",
+                    prefixIcon: Icon(Icons.person_rounded),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                  height:
-                      20), // Add some space at the bottom for better scrolling
-            ],
+                SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    prefixIcon: Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    hintText: "Phone",
+                    prefixIcon: Icon(Icons.phone_android),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.black,
+                        ),
+                      ),
+                      child: Text(
+                        'Save Changes',
+                        style: GoogleFonts.nunito(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                    height:
+                        20), // Add some space at the bottom for better scrolling
+              ],
+            ),
           ),
         ),
       ),

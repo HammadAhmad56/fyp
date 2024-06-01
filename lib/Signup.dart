@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/login.dart';
 import 'dart:io' show Platform;
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
 
@@ -72,6 +74,53 @@ class _SignupState extends State<Signup> {
         backgroundColor: Colors.red,
       ),
     );
+  }
+
+  Future<void> registeruser() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email!,
+        password: _password!,
+      );
+      // User created successfully
+      User? user = userCredential.user;
+      print('User created: ${user?.uid}');
+      // Navigate to login screen after successful signup
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } catch (e) {
+      print('Failed to create user: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to create user. Please try again.'),
+        ),
+      );
+    }
+  }
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  // saving user info to db
+  void _saveUserData() {
+    final FirebaseDatabase database = FirebaseDatabase.instance;
+    DatabaseReference usersRef = database.ref().child('users');
+
+    String name = nameController.text.trim();
+    String email = emailController.text.trim();
+
+    usersRef.push().set({
+      'name': name,
+      'email': email,
+    }).then((_) {
+      // Data saved successfully
+      print('User data saved successfully');
+    }).catchError((error) {
+      // Error occurred while saving data
+      print('Error saving user data: $error');
+    });
   }
 
   @override
@@ -181,11 +230,10 @@ class _SignupState extends State<Signup> {
                     child: ElevatedButton(
                       onPressed: _isFormValid()
                           ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
-                              );
+                              if (_formKey.currentState!.validate()) {
+                                registeruser(); // Call _registerUser function if form is valid
+                                _saveUserData();
+                              }
                             }
                           : null,
                       style: ElevatedButton.styleFrom(

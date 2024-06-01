@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1008830126267",
+    "project_id": "quoteza-d0043",
+    "storage_bucket": "quoteza-d0043.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008830126267:android:b9c78e2e70bf57406df19e",
+        "android_client_info": {
+          "package_name": "com.example.quoteza"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfljHxn4iQ-tyeG3amJCLM1G4I9mrSL8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

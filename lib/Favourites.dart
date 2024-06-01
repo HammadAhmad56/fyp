@@ -40,11 +40,19 @@ class FavoriteScreen extends StatelessWidget {
       ),
       backgroundColor: Color(0xFFF7F2EF),
       body: favoriteQuotes.isEmpty
-          ? Center(
-              child: Text(
-                "Nothing in favorites",
-                style: GoogleFonts.nunito(
-                    fontSize: 20, fontWeight: FontWeight.bold),
+          ? Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: const [
+                Color(0xFFF7F2EF),
+                Colors.white,
+                Color(0xFFF7F2EF)
+              ], begin: Alignment.bottomLeft)),
+              child: Center(
+                child: Text(
+                  "Nothing in favorites",
+                  style: GoogleFonts.nunito(
+                      fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
             )
           : ListView.builder(

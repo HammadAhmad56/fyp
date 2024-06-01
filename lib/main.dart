@@ -2,11 +2,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quoteza/MainPage.dart';
 import 'package:quoteza/Splashscreen.dart';
 import 'Fquote.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:quoteza/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:quoteza/MainPage.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+    apiKey: 'AIzaSyCfljHxn4iQ-tyeG3amJCLM1G4I9mrSL8Y',
+    appId: '1:1008830126267:android:b9c78e2e70bf57406df19e',
+    messagingSenderId: 'sendid',
+    projectId: 'quoteza-d0043',
+    storageBucket: 'quoteza-d0043.appspot.com',
+  )
+      // options: DefaultFirebaseOptions.currentPlatform
+      );
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color(0xFFF7F2EF),
@@ -14,8 +28,31 @@ void main() {
       statusBarBrightness: Brightness.dark));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key} );
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Future<void> _checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -27,7 +64,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: MainPage(),
+        home: Splashscreen(),
       ),
     );
   }

@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,9 +7,13 @@ import 'package:quoteza/Help.dart';
 import 'package:quoteza/P-info.dart';
 import 'package:quoteza/Privacy-policy.dart';
 import 'package:quoteza/Reminder.dart';
+import 'package:quoteza/Signup.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:quoteza/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,6 +23,68 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void signOut() async {
+    await _auth.signOut();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isLoggedIn');
+    Navigator.push(
+      context as BuildContext,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
+  // delete user fn
+  // void _deleteUserAccount() async {
+  //   try {
+  //     User? user = _auth.currentUser;
+
+  //     if (user != null) {
+  //       // Re-authenticate the user
+  //       String email = user.email!;
+  //       String password = 'userPassword'; // Replace with the user's password
+
+  //       AuthCredential credential =
+  //           EmailAuthProvider.credential(email: email, password: password);
+  //       await user.reauthenticateWithCredential(credential);
+
+  //       await user.delete();
+  //       print('User account deleted successfully.');
+  //     } else {
+  //       print('No user is currently signed in.');
+  //     }
+  //   } catch (error) {
+  //     print('Error deleting user account: $error');
+  //   }
+  // }
+  void _deleteUserAccount() async {
+    try {
+      User? user = _auth.currentUser;
+
+      if (user != null) {
+        await user.delete();
+        print('User account deleted successfully.');
+        {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Signup()),
+          );
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Your Account is deleted successfully!'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      } else {
+        print('No user is currently signed in.');
+      }
+    } catch (error) {
+      print('Error deleting user account: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -450,7 +515,33 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    (showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: Text("Aleart!"),
+                              content:
+                                  Text("Do you want to delete your account?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    _deleteUserAccount();
+                                  },
+                                  child: Text(
+                                    "Yes",
+                                    style:
+                                        GoogleFonts.nunito(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            )));
+                  },
                   child: Row(
                     children: [
                       SizedBox(
@@ -492,7 +583,31 @@ class _ProfileState extends State<Profile> {
           height: 60,
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text("Confirmation"),
+                        content: Text("Do you want to Logout??"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              signOut();
+                            },
+                            child: Text(
+                              "Yes",
+                              style: GoogleFonts.nunito(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ));
+            },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromRGBO(46, 59, 75, 1),
                 foregroundColor: Colors.white),

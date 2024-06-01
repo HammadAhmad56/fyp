@@ -43,57 +43,63 @@ class _ForgotState extends State<Forgot> {
           backgroundColor: Color(0xFFF7F2EF),
         ),
         backgroundColor: Color(0xFFF7F2EF),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              SizedBox(height: 16),
-              Column(
-                children: [
-                  Text(
-                    "Please Enter Your Valid E-mail Address",
-                    style: GoogleFonts.nunito(color: Colors.black45),
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Color(0xFFF7F2EF), Colors.white, Color(0xFFF7F2EF)],
+                  begin: Alignment.bottomLeft)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                Column(
+                  children: [
+                    Text(
+                      "Please Enter Your Valid E-mail Address",
+                      style: GoogleFonts.nunito(color: Colors.black45),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) {
+                    setState(() {
+                      isEmailValid = isValidEmail(value);
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    prefixIcon: Icon(Icons.email_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    errorText: isEmailValid ? null : 'Enter a valid email',
                   ),
-                ],
-              ),
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  setState(() {
-                    isEmailValid = isValidEmail(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                ),
+                Spacer(), // Add space between text field and button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                    foregroundColor: Colors.white,
                   ),
-                  errorText: isEmailValid ? null : 'Enter a valid email',
+                  onPressed: isEmailValid
+                      ? () {
+                          // Continue button pressed with a valid email
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Reset()),
+                          );
+                        }
+                      : null,
+                  child: Text(
+                    'Continue',
+                    style: GoogleFonts.nunito(color: Colors.white),
+                  ),
                 ),
-              ),
-              Spacer(), // Add space between text field and button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: isEmailValid
-                    ? () {
-                        // Continue button pressed with a valid email
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Reset()),
-                        );
-                      }
-                    : null,
-                child: Text(
-                  'Continue',
-                  style: GoogleFonts.nunito(color: Colors.white),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
