@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/MainPage.dart';
 import 'package:quoteza/Signup.dart';
@@ -35,6 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isButtonEnabled = false;
+  String? emailError;
+  String? passwordError;
 
   Future<bool> _isAndroidDevice() async {
     if (Platform.isAndroid) {
@@ -44,18 +47,77 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // this is the velidation of email and password textboxs
+  bool _isFormValid() {
+    return emailController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        _validateEmail(emailController.text) == null &&
+        _validatePassword(passwordController.text) == null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    // Your email validation logic goes here
+    // For example, you can use a regular expression for a basic email validation
+    // Replace the regular expression below with a more comprehensive one if needed
+    final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Enter a valid email address';
+    }
+
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    // Your password validation logic goes here
+    // For example, you can check if the password has a minimum length
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+
+    return null;
+  }
+
+  // end of the velidation of email and passwords textboxs
+// ya wala message snackbar ka ha jis ma apple ki button ma show ho rha ha
   void _showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 1),
-        backgroundColor: Colors.red,
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(
+            "Apple Login is not available on andriod device ",
+            style: GoogleFonts.nunito(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
+  bool isLoading = false;
+  // bool isButtonEnabled = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   void signInWithEmailAndPassword() async {
+    setState(() {
+      isLoading = true;
+      isButtonEnabled = false;
+      emailError = null;
+      passwordError = null;
+    });
     try {
       final String email = emailController.text.trim();
       final String password = passwordController.text.trim();
@@ -71,6 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
+        prefs.setString("Key", email);
+        prefs.setString("key2", password);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),
@@ -79,15 +143,39 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnotherScreen()));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Enter the correct Email or Password!'),
-          duration: Duration(seconds: 2),
-        ),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Failed to Login",
+              style: GoogleFonts.nunito(),
+            ),
+            content: Text(
+              "Invalid Email or password",
+              style: GoogleFonts.nunito(),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  "OK",
+                  style: GoogleFonts.nunito(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
       );
       print('Error signing in: $e');
       // Handle sign-in errors here
+    } finally {
+      setState(() {
+        isLoading = false;
+        isButtonEnabled = true;
+      });
     }
   }
 
@@ -138,9 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Container(
                           child: TextFormField(
-                            controller: emailController,
-                            validator: (value) => _validateEmail(value),
-                            keyboardType: TextInputType.emailAddress,
+                            style: GoogleFonts.nunito(),
                             onChanged: (value) {
                               setState(() {
                                 isButtonEnabled = _isFormValid();
@@ -148,9 +234,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             decoration: InputDecoration(
                                 hintText: "Email",
+                                errorText: _validateEmail(emailController.text),
                                 prefixIcon: Icon(Icons.email_outlined),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12))),
+                            controller: emailController,
+                            validator: (value) => _validateEmail(value),
+                            keyboardType: TextInputType.emailAddress,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                           ),
                         ),
                         SizedBox(
@@ -158,18 +250,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Container(
                           child: TextFormField(
-                            controller: passwordController,
-                            validator: (value) => value == null || value.isEmpty
-                                ? "Password is Required"
-                                : null,
-                            keyboardType: TextInputType.visiblePassword,
-                            obscureText: scureText,
+                            style: GoogleFonts.nunito(),
                             onChanged: (value) {
                               setState(() {
                                 isButtonEnabled = _isFormValid();
                               });
                             },
                             decoration: InputDecoration(
+                                errorText:
+                                    _validatePassword(passwordController.text),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     scureText
@@ -186,6 +275,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 prefixIcon: Icon(Icons.key_rounded),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12))),
+                            controller: passwordController,
+                            validator: (value) => value == null || value.isEmpty
+                                ? "Password is Required"
+                                : null,
+                            keyboardType: TextInputType.visiblePassword,
+                            obscureText: scureText,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                           ),
                         ),
                         SizedBox(
@@ -194,7 +291,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                             alignment: Alignment.centerRight,
                             child: InkWell(
-                              child: Text("Forgot Password?"),
+                              child: Text(
+                                "Forgot Password?",
+                                style: GoogleFonts.nunito(),
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -204,25 +304,42 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             )),
                         Container(
+                          // width: double.infinity,
+                          // padding: EdgeInsets.all(9),
+                          // child: ElevatedButton(
+                          //   onPressed: isButtonEnabled
+                          //       ? () {
+                          //           signInWithEmailAndPassword();
+                          //         }
+                          //       : null,
+                          //   style: ElevatedButton.styleFrom(
+                          //       backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                          //       foregroundColor: Colors.white),
+                          //   child: Text("Login"),
+                          // ),
                           width: double.infinity,
                           padding: EdgeInsets.all(9),
                           child: ElevatedButton(
                             onPressed: isButtonEnabled
                                 ? () {
                                     signInWithEmailAndPassword();
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => MainPage()),
-                                    // );
                                   }
                                 : null,
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                                foregroundColor: Colors.white),
-                            child: Text("Login"),
+                              backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                              foregroundColor: Colors.white,
+                            ),
+                            child: Text(
+                              "Login",
+                              style: GoogleFonts.nunito(),
+                            ),
                           ),
                         ),
+                        if (isLoading)
+                          Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(),
+                          ),
                         Container(
                             height: 20,
                             // color: Colors.red,
@@ -236,7 +353,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text("OR"),
+                                  child: Text(
+                                    "OR",
+                                    style: GoogleFonts.nunito(),
+                                  ),
                                 ),
                                 Expanded(
                                   child: Divider(
@@ -271,7 +391,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text("\t\tLogin with Google"),
+                                Text(
+                                  "\t\tLogin with Google",
+                                  style: GoogleFonts.nunito(),
+                                ),
                               ],
                             ),
                           ),
@@ -282,8 +405,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         InkWell(
                           onTap: () async {
                             if (await _isAndroidDevice()) {
-                              _showMessage(context,
-                                  "Apple Login is not available on Android");
+                              _showMessage(
+                                context,
+                                "Apple Login is not available on Android",
+                              );
                             } else {}
                             ;
                           },
@@ -345,44 +470,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  bool _isFormValid() {
-    return emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        _validateEmail(emailController.text) == null &&
-        _validatePassword(passwordController.text) == null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-
-    // Your email validation logic goes here
-
-    // For example, you can use a regular expression for a basic email validation
-    // Replace the regular expression below with a more comprehensive one if needed
-    final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Enter a valid email address';
-    }
-
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-
-    // Your password validation logic goes here
-
-    // For example, you can check if the password has a minimum length
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-
-    return null;
   }
 }

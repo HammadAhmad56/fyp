@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
 
@@ -45,7 +46,7 @@ class _SignupState extends State<Signup> {
     return null;
   }
 
-  String? _validateConfirmPassword(String? value) {
+  String? _validateConfirmPassword(String? value, String? originalPassword) {
     if (value == null || value.isEmpty) {
       return 'Confirm Password is required';
     } else if (value != _password) {
@@ -103,6 +104,7 @@ class _SignupState extends State<Signup> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   // saving user info to db
   void _saveUserData() {
     final FirebaseDatabase database = FirebaseDatabase.instance;
@@ -152,7 +154,6 @@ class _SignupState extends State<Signup> {
                   SizedBox(height: 10),
                   TextFormField(
                     onChanged: (value) => _name = value.trim(),
-                    validator: _validateName,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       hintText: "Name",
@@ -161,11 +162,12 @@ class _SignupState extends State<Signup> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    validator: _validateName,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   SizedBox(height: 10),
                   TextFormField(
                     onChanged: (value) => _email = value.trim(),
-                    validator: _validateEmail,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: "Email",
@@ -174,11 +176,12 @@ class _SignupState extends State<Signup> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    validator: (value) => _validateEmail(value),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   SizedBox(height: 10),
                   TextFormField(
                     onChanged: (value) => _password = value,
-                    validator: _validatePassword,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: scureText,
                     decoration: InputDecoration(
@@ -198,10 +201,21 @@ class _SignupState extends State<Signup> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Password is Required";
+                      }
+                      if (_validatePassword(value) != null) {
+                        return _validatePassword(value);
+                      }
+                      return null;
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   SizedBox(height: 10),
                   TextFormField(
-                    validator: _validateConfirmPassword,
+                    validator: (value) =>
+                        _validateConfirmPassword(value, _password),
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: confirmscureText,
                     decoration: InputDecoration(

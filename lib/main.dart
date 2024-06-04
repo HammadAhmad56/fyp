@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:quoteza/Splashscreen.dart';
+import 'package:quoteza/Addreminder.dart';
 import 'Fquote.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:quoteza/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quoteza/MainPage.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,13 @@ Future<void> main() async {
   )
       // options: DefaultFirebaseOptions.currentPlatform
       );
+
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+  OneSignal.initialize("1d57a855-a394-49dc-837e-cdcd2d1e0ec5");
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  OneSignal.Notifications.requestPermission(true);
   runApp(const MyApp());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Color(0xFFF7F2EF),
@@ -29,7 +38,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key} );
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -64,7 +73,8 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: Splashscreen(),
+        home: Splashscreen
+        (),
       ),
     );
   }

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_declarations
+// ignore_for_file: prefer_const_constructors, prefer_const_declarations, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -15,6 +15,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String fq = "";
+String quote = '';
+String author = '';
+List<String> favoriteQuotes = [];
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -24,10 +27,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String quote = '';
   bool isLoading = true;
   late Timer _timer;
-  List<String> favoriteQuotes = [];
 
   @override
   void initState() {
@@ -74,6 +75,7 @@ class _MainPageState extends State<MainPage> {
           setState(() {
             isLoading = false;
             quote = responseData[0]['quote'];
+            author = responseData[0]['author'];
           });
         } else {
           setState(() {
@@ -108,9 +110,10 @@ class _MainPageState extends State<MainPage> {
           !quote.contains('Error')) {
         setState(() {
           !favoriteQuotes.contains(quote);
-          favoriteQuotes.add(quote);
+          favoriteQuotes.add(quote + author);
           favoriteQuotes = [...favoriteQuotes, quote];
-          Provider.of<FavoriteQuotes>(context, listen: false).add(quote);
+          Provider.of<FavoriteQuotes>(context, listen: false)
+              .add(quote + author);
         });
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setStringList('favoriteQuotes', favoriteQuotes);
@@ -287,7 +290,7 @@ class _MainPageState extends State<MainPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Text(
-                            quote,
+                            "$quote\n$author",
                             style: GoogleFonts.nunito(
                               fontSize: 24,
                               color: Color(0xFFF7F2EF),
@@ -297,6 +300,30 @@ class _MainPageState extends State<MainPage> {
                             textAlign: TextAlign.center,
                             maxLines: 5,
                           ),
+                          // child: RichText(
+                          //   text: TextSpan(spellOut: true,
+                          //     text: '$quote ', // First part of the text
+                          //     style: GoogleFonts.nunito(
+                          //       fontSize: 24,
+                          //       color: Color(0xFFF7F2EF),
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   //    overflow: TextOverflow.ellipsis,
+                          //   // textAlign: TextAlign.center,
+                          //   // maxLines: 5,
+                          //     children: <TextSpan>[
+                          //       TextSpan(
+                          //         text:
+                          //             '$author', // Second part of the text with a different color
+                          //          style: GoogleFonts.nunito(
+                          //       fontSize: 24,
+                          //       color: Color.fromARGB(255, 230, 9, 24),
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // )
                         ),
                       ),
               ],

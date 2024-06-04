@@ -10,6 +10,7 @@ import 'package:quoteza/Reminder.dart';
 import 'package:quoteza/Signup.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
+import 'package:quoteza/Addreminder.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quoteza/login.dart';
@@ -28,6 +29,8 @@ class _ProfileState extends State<Profile> {
     await _auth.signOut();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('isLoggedIn');
+    await prefs.remove("key");//ya key email ki ha 
+    await prefs.remove("key2");//ya key password ki ha
     Navigator.push(
       context as BuildContext,
       MaterialPageRoute(builder: (context) => LoginScreen()),

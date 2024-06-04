@@ -1,16 +1,70 @@
-//ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+//ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:alarm/alarm.dart';
 import 'package:flutter/services.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:quoteza/Addreminder.dart';
+import 'package:http/http.dart' as http;
+import 'package:quoteza/Addreminder.dart';
+
+String empty = "Do not have any schedule";
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await Alarm.init();
 }
+
+Future<void> scheduleNotification(String playerId, DateTime scheduledTime,
+    String title, String message) async {
+  final String oneSignalUrl = 'https://onesignal.com/api/v1/notifications';
+  final String appId = '1d57a855-a394-49dc-837e-cdcd2d1e0ec5';
+  final String restApiKey = 'MDczYTE0NjUtY2Y5Ny00MzY1LTk5OGYtNTUwNDQzNGMyNjkw';
+
+  final Map<String, dynamic> notificationData = {
+    'app_id': appId,
+    'include_player_ids': [playerId],
+    'headings': {'en': title},
+    'contents': {'en': message},
+    'send_after':
+        scheduledTime.toUtc().toIso8601String() + 'Z', // Ensure UTC time format
+  };
+
+  final response = await http.post(
+    Uri.parse(oneSignalUrl),
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': 'Basic $restApiKey',
+    },
+    body: json.encode(notificationData),
+  );
+
+  if (response.statusCode == 200) {
+    print('Notification scheduled successfully');
+  } else {
+    print('Failed to schedule notification: ${response.body}');
+  }
+}
+
+// one signal get user id
+//  void _initOneSignal() async {
+//     OneSignal.shared.setAppId("YOUR_ONESIGNAL_APP_ID");
+//     OneSignal.shared.setNotificationOpenedHandler((notification) {
+//       print("Notification opened: ${notification}");
+//     });
+
+//     // Get the Player ID (user ID)
+//     var status = await OneSignal.shared.getDeviceState();
+//     String? playerId = status?.userId;
+//     print("OneSignal Player ID: $playerId");
+
+//     if (playerId != null) {
+//       // You can now use this playerId to send notifications
+//     }
+//   }
 
 class Reminder extends StatefulWidget {
   const Reminder({super.key});
@@ -20,6 +74,12 @@ class Reminder extends StatefulWidget {
 
 class _ReminderState extends State<Reminder> {
   @override
+  void initState() {
+    super.initState();
+    // empty=scheduleDateTime.toString();
+    // _initOneSignal();
+  }
+
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -49,7 +109,7 @@ class _ReminderState extends State<Reminder> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Addreminder()));
+                      MaterialPageRoute(builder: (context) => AddReminders()));
                 },
                 icon: Icon(Icons.add_circle_outline_rounded))
           ],
@@ -60,7 +120,10 @@ class _ReminderState extends State<Reminder> {
             child: Column(
               children: [
                 Text(
-                    'Set up daily reminders to make your motivational quotes fits your routine')
+                    'Set up daily reminders to make your motivational quotes fits your routine'),
+                ListTile(
+                    title: Text('My Reminders'),
+                    subtitle: Text(empty.toString())),
               ],
             ),
           ),

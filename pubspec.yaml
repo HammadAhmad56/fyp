@@ -54,6 +54,7 @@ dependencies:
   flutter_email_sender: ^6.0.3
   firebase_database: ^10.5.7
   cloud_firestore: ^4.17.5
+  onesignal_flutter: ^5.2.0
 
 dev_dependencies:
   flutter_test:
