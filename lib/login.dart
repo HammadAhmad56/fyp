@@ -187,14 +187,15 @@ class _LoginScreenState extends State<LoginScreen> {
         scrollbarOrientation: ScrollbarOrientation.top,
         child: SafeArea(
           child: Scaffold(
-            backgroundColor: Color(0xFFF7F2EF),
+            // backgroundColor: Color(0xFFF7F2EF),
             resizeToAvoidBottomInset: false,
             body: Container(
+              height: double.infinity,
               decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                Color(0xFFF7F2EF),
-                Colors.white,
-                Color(0xFFF7F2EF)
+            Color.fromARGB(255, 237, 205, 207),
+            Colors.white,
+            Color.fromARGB(255, 247, 220, 211)
               ], begin: Alignment.bottomLeft)),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -304,19 +305,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             )),
                         Container(
-                          // width: double.infinity,
-                          // padding: EdgeInsets.all(9),
-                          // child: ElevatedButton(
-                          //   onPressed: isButtonEnabled
-                          //       ? () {
-                          //           signInWithEmailAndPassword();
-                          //         }
-                          //       : null,
-                          //   style: ElevatedButton.styleFrom(
-                          //       backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                          //       foregroundColor: Colors.white),
-                          //   child: Text("Login"),
-                          // ),
                           width: double.infinity,
                           padding: EdgeInsets.all(9),
                           child: ElevatedButton(

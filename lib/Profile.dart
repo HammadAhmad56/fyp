@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/Favourites.dart';
 import 'package:quoteza/Help.dart';
@@ -10,11 +9,11 @@ import 'package:quoteza/Reminder.dart';
 import 'package:quoteza/Signup.dart';
 import 'package:quoteza/Subscription.dart';
 import 'package:quoteza/Terms.dart';
-import 'package:quoteza/Addreminder.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quoteza/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -29,37 +28,14 @@ class _ProfileState extends State<Profile> {
     await _auth.signOut();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('isLoggedIn');
-    await prefs.remove("key");//ya key email ki ha 
-    await prefs.remove("key2");//ya key password ki ha
+    await prefs.remove("key"); //ya key email ki ha
+    await prefs.remove("key2"); //ya key password ki ha
     Navigator.push(
       context as BuildContext,
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
-  // delete user fn
-  // void _deleteUserAccount() async {
-  //   try {
-  //     User? user = _auth.currentUser;
-
-  //     if (user != null) {
-  //       // Re-authenticate the user
-  //       String email = user.email!;
-  //       String password = 'userPassword'; // Replace with the user's password
-
-  //       AuthCredential credential =
-  //           EmailAuthProvider.credential(email: email, password: password);
-  //       await user.reauthenticateWithCredential(credential);
-
-  //       await user.delete();
-  //       print('User account deleted successfully.');
-  //     } else {
-  //       print('No user is currently signed in.');
-  //     }
-  //   } catch (error) {
-  //     print('Error deleting user account: $error');
-  //   }
-  // }
   void _deleteUserAccount() async {
     try {
       User? user = _auth.currentUser;
@@ -73,18 +49,55 @@ class _ProfileState extends State<Profile> {
             MaterialPageRoute(builder: (context) => Signup()),
           );
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Your Account is deleted successfully!'),
-            duration: Duration(seconds: 1),
-          ),
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Alert", style: GoogleFonts.nunito()),
+              content: Text(
+                "Your Account is Deleted Successfuly",
+                style: GoogleFonts.nunito(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
         );
       } else {
         print('No user is currently signed in.');
       }
     } catch (error) {
       print('Error deleting user account: $error');
+    }
+  }
+
+  //  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late String _userName = '';
+  late String _userEmail = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserData();
+  }
+
+  Future<void> _getUserData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userData =
+          await _firestore.collection('users').doc(user.uid).get();
+      setState(() {
+        _userName = userData['name'] ?? 'Username not found';
+        _userEmail = userData['email'] ?? 'Email not found';
+      });
     }
   }
 
@@ -95,8 +108,8 @@ class _ProfileState extends State<Profile> {
       child: Scaffold(
         backgroundColor: Color(0xFFF7F2EF),
         appBar: AppBar(
-          backgroundColor: Color(0xFFF7F2EF),
-          surfaceTintColor: Color(0xFFF7F2EF),
+          surfaceTintColor:  Color.fromARGB(255, 247, 220, 211),
+          backgroundColor: Color.fromARGB(255, 247, 220, 211),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -118,11 +131,15 @@ class _ProfileState extends State<Profile> {
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Color(0xFFF7F2EF),
-              Colors.white,
-              Color(0xFFF7F2EF)
-            ], begin: Alignment.bottomLeft)),
+                gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              // end: Alignment.bottomLeft,
+              colors: [
+                Color.fromARGB(255, 237, 205, 207),
+                Colors.white,
+                Color.fromARGB(255, 247, 220, 211)
+              ],
+            )),
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -142,7 +159,7 @@ class _ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Emily John",
+                            _userName,
                             style: GoogleFonts.nunito(
                               color: Colors.black,
                               fontWeight: FontWeight.w700,
@@ -150,13 +167,13 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                           Text(
-                            "emily.john@gmail.com",
+                            _userEmail,
                             style: GoogleFonts.nunito(
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ],
@@ -186,11 +203,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.person_rounded,
                               size: 24,
                               color: Colors.grey,
@@ -231,11 +266,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.favorite_outline_outlined,
                               size: 24,
                               color: Colors.grey,
@@ -271,11 +324,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.workspace_premium_outlined,
                               size: 24,
                               color: Colors.grey,
@@ -310,11 +381,29 @@ class _ProfileState extends State<Profile> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
                         alignment: Alignment.centerLeft,
                         child: CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 25,
                           child: Icon(
+                            shadows: [
+                              Shadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              )
+                            ],
                             Icons.add_alert,
                             size: 24,
                             color: Colors.grey,
@@ -356,11 +445,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.lock_outline_rounded,
                               size: 24,
                               color: Colors.grey,
@@ -403,11 +510,29 @@ class _ProfileState extends State<Profile> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
                             alignment: Alignment.centerLeft,
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               radius: 25,
                               child: Icon(
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  )
+                                ],
                                 Icons.assignment,
                                 size: 24,
                                 color: Colors.grey,
@@ -450,11 +575,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.help_outline_rounded,
                               size: 24,
                               color: Colors.grey,
@@ -487,11 +630,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.share,
                               color: Colors.grey,
                               size: 24,
@@ -522,7 +683,7 @@ class _ProfileState extends State<Profile> {
                     (showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                              title: Text("Aleart!"),
+                              title: Text("Alert!"),
                               content:
                                   Text("Do you want to delete your account?"),
                               actions: [
@@ -553,11 +714,29 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
                           alignment: Alignment.centerLeft,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 25,
                             child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
                               Icons.person_off_rounded,
                               size: 24,
                               color: Colors.grey,

@@ -32,9 +32,19 @@ class _SubscriptionState extends State<Subscription> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF7F2EF),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Container(
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          // end: Alignment.bottomLeft,
+          colors: [
+            Color.fromARGB(255, 237, 205, 207),
+            Colors.white,
+            Color.fromARGB(255, 247, 220, 211)
+          ],
+        )),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
           child: Column(children: [
             Container(
                 margin: EdgeInsets.only(right: 15, top: 15),
@@ -223,7 +233,10 @@ class _SubscriptionState extends State<Subscription> {
                 child: Text(
                     "Totally free for 3 days. And enjoy all the quotes then Rs 3,050.00 will be charged annually or Rs 2800.00/month. You can cancel it anytime. ")),
             ElevatedButton(
-                onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade800,),
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade800,
+                ),
                 child: Text(
                   'Subscribe',
                   style: GoogleFonts.nunito(color: Colors.white),

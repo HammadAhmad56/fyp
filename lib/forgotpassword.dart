@@ -40,14 +40,16 @@ class _ForgotState extends State<Forgot> {
             style:
                 GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
           ),
-          backgroundColor: Color(0xFFF7F2EF),
+          backgroundColor:Color.fromARGB(255, 247, 220, 211),
         ),
         backgroundColor: Color(0xFFF7F2EF),
         body: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Color(0xFFF7F2EF), Colors.white, Color(0xFFF7F2EF)],
-                  begin: Alignment.bottomLeft)),
+                  gradient: LinearGradient(colors: [
+            Color.fromARGB(255, 237, 205, 207),
+            Colors.white,
+            Color.fromARGB(255, 247, 220, 211)
+              ], begin: Alignment.bottomLeft)),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(

@@ -14,7 +14,6 @@ class Splashscreen extends StatefulWidget {
 }
 
 class _SplashscreenState extends State<Splashscreen> {
-  @override
   void signInWithEmailAndPassword() async {
     try {
       final FirebaseAuth _auth = FirebaseAuth.instance;

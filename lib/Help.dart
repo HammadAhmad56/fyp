@@ -49,7 +49,7 @@ class _HelpState extends State<Help> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        surfaceTintColor: Color(0xFFF7F2EF),
+        surfaceTintColor: Color.fromARGB(255, 247, 220, 211),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
@@ -67,106 +67,115 @@ class _HelpState extends State<Help> {
           "Help Center",
           style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w700),
         ),
-        backgroundColor: Color(0xFFF7F2EF),
+        backgroundColor: Color.fromARGB(255, 247, 220, 211),
       ),
       backgroundColor: Color(0xFFF7F2EF),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Color(0xFFF7F2EF), Colors.white, Color(0xFFF7F2EF)],
-                  begin: Alignment.bottomLeft)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              onChanged: () {
-                setState(() {
-                  _isButtonDisabled =
-                      !(_formKey.currentState?.validate() ?? false);
-                });
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Our Customer support service is always available for you. Please contact us here if you have any query.',
-                    style: GoogleFonts.nunito(
-                        fontWeight: FontWeight.w300, fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+      body: Container(
+        height: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          // end: Alignment.bottomLeft,
+          colors: [
+            Color.fromARGB(255, 237, 205, 207),
+            Colors.white,
+            Color.fromARGB(255, 247, 220, 211)
+          ],
+        )),
+        child: SingleChildScrollView(
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                onChanged: () {
+                  setState(() {
+                    _isButtonDisabled =
+                        !(_formKey.currentState?.validate() ?? false);
+                  });
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Our Customer support service is always available for you. Please contact us here if you have any query.',
+                      style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.w300, fontSize: 16),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+                    SizedBox(
+                      height: 25,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _issueController,
-                    decoration: InputDecoration(
-                      labelText: 'Issue',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your issue';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 32),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                        // disabledBackgroundColor: Color(0xFFF7F2EF),
-                        textStyle: GoogleFonts.nunito(color: Colors.white)),
-                    onPressed: _isButtonDisabled
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              _sendEmail();
-                            }
-                            // Handle submit button press
-                            // This function will be called when all fields are valid
-                          },
-                    child: Text('Submit'),
-                  ),
-                  SizedBox(
-                      height:
-                          32), // Add some space at the bottom for better scrolling
-                ],
+                    SizedBox(height: 16),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                            .hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    TextFormField(
+                      controller: _issueController,
+                      decoration: InputDecoration(
+                        labelText: 'Issue',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.fromLTRB(12, 20, 12, 20),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your issue';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 32),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                          // disabledBackgroundColor: Color(0xFFF7F2EF),
+                          textStyle: GoogleFonts.nunito(color: Colors.white)),
+                      onPressed: _isButtonDisabled
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                _sendEmail();
+                              }
+                              // Handle submit button press
+                              // This function will be called when all fields are valid
+                            },
+                      child: Text('Submit'),
+                    ),
+                    SizedBox(
+                        height:
+                            32), // Add some space at the bottom for better scrolling
+                  ],
+                ),
               ),
             ),
           ),
@@ -175,5 +184,3 @@ class _HelpState extends State<Help> {
     );
   }
 }
-
-

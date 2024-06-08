@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quoteza/P-info.dart';
 import 'package:quoteza/Splashscreen.dart';
-import 'package:quoteza/Addreminder.dart';
 import 'Fquote.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:quoteza/login.dart';
@@ -44,6 +44,14 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+
+@override
+void initState() {
+  nameController;
+  emailController;
+}
+
+
 class _MyAppState extends State<MyApp> {
   Future<void> _checkLoginStatus() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -73,8 +81,7 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: Splashscreen
-        (),
+        home: Splashscreen(),
       ),
     );
   }
