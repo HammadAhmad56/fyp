@@ -43,10 +43,14 @@ class _ResetState extends State<Reset> {
     super.dispose();
   }
 
+  // firebase email otp
+  // final TextEditingController _emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Color(0xFFF7F2EF),
           leading: IconButton(

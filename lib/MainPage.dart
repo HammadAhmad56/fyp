@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/Fquote.dart';
@@ -60,6 +61,7 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           isLoading = false;
           quote = 'No internet connection';
+          author = "No internet connection";
         });
         return;
       }
@@ -81,23 +83,27 @@ class _MainPageState extends State<MainPage> {
           setState(() {
             isLoading = false;
             quote = 'Quote not found in response';
+            author = 'Author not found in response';
           });
         }
       } else {
         setState(() {
           isLoading = false;
           quote = 'Failed to load quotes';
+          author = 'Failed to load author';
         });
       }
     } on TimeoutException {
       setState(() {
         isLoading = false;
         quote = 'Failed to load quotes (timeout)';
+        author = 'Failed to load author (timeout)';
       });
-    } on Exception catch (e) {
+    } on Exception catch (e, a) {
       setState(() {
         isLoading = false;
         quote = 'Error: $e';
+        author = 'Error:$a';
       });
     }
   }
@@ -107,11 +113,15 @@ class _MainPageState extends State<MainPage> {
       if (!quote.contains('Failed to load quotes') &&
           !quote.contains('Failed to load quotes (timeout)') &&
           !quote.contains('No internet connection') &&
-          !quote.contains('Error')) {
+          !quote.contains('Error') &&
+          !author.contains('Failed to load author') &&
+          !author.contains('Failed to load author (timeout)') &&
+          !author.contains('No internet connection') &&
+          !author.contains('Error')) {
         setState(() {
-          !favoriteQuotes.contains(quote);
+          !favoriteQuotes.contains(quote + author);
           favoriteQuotes.add(quote + author);
-          favoriteQuotes = [...favoriteQuotes, quote];
+          favoriteQuotes = [...favoriteQuotes, quote, author];
           Provider.of<FavoriteQuotes>(context, listen: false)
               .add(quote + author);
         });
@@ -187,145 +197,174 @@ class _MainPageState extends State<MainPage> {
                   "assets/images/home.jpg",
                   fit: BoxFit.cover,
                 ),
-                Positioned(
-                  bottom: 200,
-                  left: 128,
-                  child: Row(
-                    children: [
-                      IconButton(
+                Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsetsDirectional.only(top: 40, end: 20),
+                      alignment: Alignment.topRight,
+                      child: ElevatedButton.icon(
                         onPressed: () {
-                          // Handle heart button press
-                          _addToFavorites();
-                        },
-                        icon: Icon(
-                          Icons.favorite_rounded,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      IconButton(
-                        onPressed: () {
-                          // Handle load button press
-                          Share.share(
-                            sharing,
-                            subject: "Motivational quote app",
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Subscription()),
                           );
                         },
-                        icon: Icon(
-                          Icons.file_download_outlined,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: Container(
-                    width: 50, // Adjust the width and height to make it square
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(
-                          8), // Adjust the radius for rounded corners if needed
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      onPressed: () {
-                        // Handle profile button press
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Profile()));
-                      },
-                      icon: Icon(
-                        Icons.account_circle_outlined,
-                        color: Colors.black, // Adjust icon color if needed
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 40,
-                  right: 20,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Subscription()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFF7F2EF),
-                      elevation: 0,
-                      textStyle: TextStyle(fontSize: 16, color: Colors.black),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: Colors.white),
-                      ),
-                    ),
-                    icon: Icon(
-                      FontAwesomeIcons.crown,
-                      size: 16,
-                      color: Colors.black,
-                    ),
-                    label: Text(
-                      "Premium",
-                      style: GoogleFonts.nunitoSans(
-                          fontWeight: FontWeight.bold, fontSize: 15),
-                    ),
-                  ),
-                ),
-                isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                        color: Color(0xFFF7F2EF),
-                      ))
-                    : Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            "$quote\n$author",
-                            style: GoogleFonts.nunito(
-                              fontSize: 24,
-                              color: Color(0xFFF7F2EF),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            maxLines: 5,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFF7F2EF),
+                          elevation: 0,
+                          textStyle:
+                              TextStyle(fontSize: 16, color: Colors.black),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: Colors.white),
                           ),
-                          // child: RichText(
-                          //   text: TextSpan(spellOut: true,
-                          //     text: '$quote ', // First part of the text
-                          //     style: GoogleFonts.nunito(
-                          //       fontSize: 24,
-                          //       color: Color(0xFFF7F2EF),
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //   //    overflow: TextOverflow.ellipsis,
-                          //   // textAlign: TextAlign.center,
-                          //   // maxLines: 5,
-                          //     children: <TextSpan>[
-                          //       TextSpan(
-                          //         text:
-                          //             '$author', // Second part of the text with a different color
-                          //          style: GoogleFonts.nunito(
-                          //       fontSize: 24,
-                          //       color: Color.fromARGB(255, 230, 9, 24),
-                          //       fontWeight: FontWeight.bold,
-                          //     ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // )
+                        ),
+                        icon: Icon(
+                          FontAwesomeIcons.crown,
+                          size: 16,
+                          color: Colors.black,
+                        ),
+                        label: Text(
+                          "Premium",
+                          style: GoogleFonts.nunitoSans(
+                              fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
+                    isLoading
+                        ? Container(
+                            height: 250.0, // Set a fixed height
+                            width: double.infinity, // Set a fixed width
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xFFF7F2EF),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            height: 250.0, // Set the same fixed height
+                            width: double.infinity, // Set the same fixed width
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Text(
+                                  "$quote\n$author",
+                                  style: GoogleFonts.nunito(
+                                    fontSize: 24,
+                                    color: Color(0xFFF7F2EF),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 5,
+                                ),
+                              ),
+                            ),
+                          ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            // Handle heart button press
+                            _addToFavorites();
+                          },
+                          icon: Icon(
+                            Icons.favorite_rounded,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        IconButton(
+                          onPressed: () {
+                            // Handle load button press
+                            Share.share(
+                              sharing,
+                              subject: "Motivational quote app",
+                            );
+                          },
+                          icon: Icon(
+                            Icons.file_download_outlined,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 60),
+                    Padding(padding: EdgeInsets.all(0)),
+                    ElevatedButton(
+                      onPressed: () {
+                        _fetchAndSetQuote();
+                      },
+                      style: ElevatedButton.styleFrom(),
+                      child: Text("Press me", style: GoogleFonts.nunito()),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        margin: EdgeInsets.only(right: 20),
+                        width:
+                            50, // Adjust the width and height to make it square
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(
+                              8), // Adjust the radius for rounded corners if needed
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            // Handle profile button press
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Profile()));
+                          },
+                          icon: Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.black, // Adjust icon color if needed
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // child: RichText(
+                //   text: TextSpan(spellOut: true,
+                //     text: '$quote ', // First part of the text
+                //     style: GoogleFonts.nunito(
+                //       fontSize: 24,
+                //       color: Color(0xFFF7F2EF),
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //   //    overflow: TextOverflow.ellipsis,
+                //   // textAlign: TextAlign.center,
+                //   // maxLines: 5,
+                //     children: <TextSpan>[
+                //       TextSpan(
+                //         text:
+                //             '$author', // Second part of the text with a different color
+                //          style: GoogleFonts.nunito(
+                //       fontSize: 24,
+                //       color: Color.fromARGB(255, 230, 9, 24),
+                //       fontWeight: FontWeight.bold,
+                //     ),
+                //       ),
+                //     ],
+                //   ),
+                // )
               ],
             ),
           ),

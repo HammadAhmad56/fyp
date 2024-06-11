@@ -108,7 +108,7 @@ class _ProfileState extends State<Profile> {
       child: Scaffold(
         backgroundColor: Color(0xFFF7F2EF),
         appBar: AppBar(
-          surfaceTintColor:  Color.fromARGB(255, 247, 220, 211),
+          surfaceTintColor: Color.fromARGB(255, 247, 220, 211),
           backgroundColor: Color.fromARGB(255, 247, 220, 211),
           leading: IconButton(
             icon: Icon(
@@ -373,62 +373,61 @@ class _ProfileState extends State<Profile> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        alignment: Alignment.centerLeft,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 25,
-                          child: Icon(
-                            shadows: [
-                              Shadow(
+                InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Reminder()));
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 5,
                                 blurRadius: 7,
                                 offset: Offset(0, 3),
-                              )
+                              ),
                             ],
-                            Icons.add_alert,
-                            size: 24,
-                            color: Colors.grey,
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 25,
+                            child: Icon(
+                              shadows: [
+                                Shadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
+                              Icons.add_alert,
+                              size: 24,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Reminder()));
-                        },
-                        child: Text(
-                          'Reminders',
-                          style: GoogleFonts.nunito(
-                              fontWeight: FontWeight.w500, fontSize: 16),
-                        )),
-                    Spacer(),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.arrow_forward_ios_rounded,
-                            color: Colors.black, size: 20)),
-                  ],
+                      Text(
+                        'Reminders',
+                        style: GoogleFonts.nunito(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.arrow_forward_ios_rounded,
+                              color: Colors.black, size: 20)),
+                    ],
+                  ),
                 ),
                 InkWell(
                   onTap: () {
