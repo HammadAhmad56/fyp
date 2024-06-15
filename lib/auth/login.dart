@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quoteza/MainPage.dart';
-import 'package:quoteza/Signup.dart';
-import 'package:quoteza/forgotpassword.dart';
+import 'package:quoteza/auth/Signup.dart';
+import '../screens/MainPage.dart';
+import 'forgotpassword.dart';
 import 'dart:io' show Platform;
 import 'package:shared_preferences/shared_preferences.dart';
 

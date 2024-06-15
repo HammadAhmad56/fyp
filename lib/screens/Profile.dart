@@ -1,19 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quoteza/Favourites.dart';
-import 'package:quoteza/Help.dart';
-import 'package:quoteza/P-info.dart';
-import 'package:quoteza/Privacy-policy.dart';
-import 'package:quoteza/Reminder.dart';
-import 'package:quoteza/Signup.dart';
-import 'package:quoteza/Subscription.dart';
-import 'package:quoteza/Terms.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:quoteza/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Favourites.dart';
+import 'Help.dart';
+import 'P-info.dart';
+import 'Privacy-policy.dart';
+import 'Reminder.dart';
+import 'Subscription.dart';
+import 'Terms.dart';
+import 'package:quoteza/auth/login.dart';
+import 'package:quoteza/auth/Signup.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});

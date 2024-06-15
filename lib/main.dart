@@ -2,13 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quoteza/P-info.dart';
-import 'package:quoteza/Splashscreen.dart';
-import 'Fquote.dart';
+import 'package:quoteza/admin/Dashboard.dart';
+import 'screens/P-info.dart';
+import 'screens/Splashscreen.dart';
+import 'screens/Fquote.dart';
+import 'screens/MainPage.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:quoteza/login.dart';
+import 'package:quoteza/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:quoteza/MainPage.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
@@ -84,7 +85,7 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: Splashscreen(),
+        home: Dashboard(),
       ),
     );
   }

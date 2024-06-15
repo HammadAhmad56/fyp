@@ -4,7 +4,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quoteza/Resetpassword.dart';
+import 'package:quoteza/auth/Resetpassword.dart';
 
 class Forgot extends StatefulWidget {
   const Forgot({Key? key}) : super(key: key);

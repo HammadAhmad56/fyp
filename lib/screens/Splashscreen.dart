@@ -2,9 +2,9 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quoteza/MainPage.dart';
-import 'package:quoteza/login.dart';
+import 'MainPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:quoteza/auth/login.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:quoteza/MainPage.dart';
+import 'MainPage.dart';
 
 class AddReminders extends StatefulWidget {
   final List<Map<String, dynamic>> scheduledReminders;
