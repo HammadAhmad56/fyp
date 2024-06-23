@@ -1,14 +1,15 @@
-// // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'MainPage.dart';
+
+import 'package:quoteza/screens/MainPage.dart';
 
 class AddReminders extends StatefulWidget {
   final List<Map<String, dynamic>> scheduledReminders;
-  const AddReminders({super.key, required this.scheduledReminders});
+
+  const AddReminders({Key? key, required this.scheduledReminders})
+      : super(key: key);
 
   @override
   _AddRemindersState createState() => _AddRemindersState();
@@ -17,6 +18,15 @@ class AddReminders extends StatefulWidget {
 class _AddRemindersState extends State<AddReminders> {
   TimeOfDay? selectedTime;
   bool _isEveryday = false;
+  Map<String, bool> days = {
+    'Monday': false,
+    'Tuesday': false,
+    'Wednesday': false,
+    'Thursday': false,
+    'Friday': false,
+    'Saturday': false,
+    'Sunday': false,
+  };
 
   Future<void> scheduleOneSignalNotification({
     required String appId,
@@ -67,17 +77,52 @@ class _AddRemindersState extends State<AddReminders> {
     }
 
     final now = DateTime.now();
-    final scheduleDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      selectedTime!.hour,
-      selectedTime!.minute,
-    );
+    final daysOfWeek = {
+      'Monday': DateTime.monday,
+      'Tuesday': DateTime.tuesday,
+      'Wednesday': DateTime.wednesday,
+      'Thursday': DateTime.thursday,
+      'Friday': DateTime.friday,
+      'Saturday': DateTime.saturday,
+      'Sunday': DateTime.sunday,
+    };
+
+    for (var entry in days.entries) {
+      if (entry.value) {
+        int dayOffset = (daysOfWeek[entry.key]! - now.weekday) % 7;
+        final scheduleDateTime = now.add(Duration(days: dayOffset)).copyWith(
+              hour: selectedTime!.hour,
+              minute: selectedTime!.minute,
+            );
+
+        String id = scheduleDateTime.toIso8601String(); // Generate unique ID
+
+        await scheduleOneSignalNotification(
+          appId: '1d57a855-a394-49dc-837e-cdcd2d1e0ec5',
+          restApiKey: 'MDczYTE0NjUtY2Y5Ny00MzY1LTk5OGYtNTUwNDQzNGMyNjkw',
+          heading: 'Quote of the day😍',
+          content: quote,
+          scheduleTime: scheduleDateTime,
+        );
+
+        // Add reminder with id to scheduledReminders
+        widget.scheduledReminders.add({
+          'id': id,
+          'time': scheduleDateTime,
+          'day': entry.key,
+        });
+      }
+    }
 
     if (_isEveryday) {
       for (int i = 0; i < 7; i++) {
-        final scheduleTime = scheduleDateTime.add(Duration(days: i));
+        final scheduleTime = now.add(Duration(days: i)).copyWith(
+              hour: selectedTime!.hour,
+              minute: selectedTime!.minute,
+            );
+
+        String id = scheduleTime.toIso8601String(); // Generate unique ID
+
         await scheduleOneSignalNotification(
           appId: '1d57a855-a394-49dc-837e-cdcd2d1e0ec5',
           restApiKey: 'MDczYTE0NjUtY2Y5Ny00MzY1LTk5OGYtNTUwNDQzNGMyNjkw',
@@ -85,24 +130,16 @@ class _AddRemindersState extends State<AddReminders> {
           content: quote,
           scheduleTime: scheduleTime,
         );
+
+        // Add daily reminder with id to scheduledReminders
         widget.scheduledReminders.add({
+          'id': id,
           'time': scheduleTime,
           'daily': true,
         });
       }
-    } else {
-      await scheduleOneSignalNotification(
-        appId: '1d57a855-a394-49dc-837e-cdcd2d1e0ec5',
-        restApiKey: 'MDczYTE0NjUtY2Y5Ny00MzY1LTk5OGYtNTUwNDQzNGMyNjkw',
-        heading: 'Quote of the day😍',
-        content: quote,
-        scheduleTime: scheduleDateTime,
-      );
-      widget.scheduledReminders.add({
-        'time': scheduleDateTime,
-        'daily': false,
-      });
     }
+
     Navigator.pop(context, widget.scheduledReminders);
   }
 
@@ -123,54 +160,65 @@ class _AddRemindersState extends State<AddReminders> {
             Navigator.pop(context);
           },
         ),
-        automaticallyImplyLeading: true,
-        leadingWidth: 30,
-                  backgroundColor:Color.fromARGB(255, 247, 220, 211),
+        backgroundColor: Color.fromARGB(255, 247, 220, 211),
       ),
       body: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          // end: Alignment.bottomLeft,
-          colors: [
-            Color.fromARGB(255, 237, 205, 207),
-            Colors.white,
-            Color.fromARGB(255, 247, 220, 211)
-          ],
-        )),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton(
-                onPressed: _pickTime,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                  foregroundColor: Colors.white,
-                ),
-                child: Text("Pick Time"),
-              ),
-              SizedBox(height: 20),
-              CheckboxListTile(
-                title: Text("Everyday"),
-                value: _isEveryday,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _isEveryday = value ?? false;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _scheduleNotification,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                  foregroundColor: Colors.white,
-                ),
-                child: Text("Add Reminders"),
-              ),
+          gradient: LinearGradient(
+            begin: Alignment.bottomLeft,
+            colors: [
+              Color.fromARGB(255, 237, 205, 207),
+              Colors.white,
+              Color.fromARGB(255, 247, 220, 211),
             ],
           ),
+        ),
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ElevatedButton(
+              onPressed: _pickTime,
+              style: ElevatedButton.styleFrom(
+                // primary: Color(0xFF2E3B4B),
+                // onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+              ),
+              child: Text(
+                selectedTime == null
+                    ? 'Pick Time'
+                    : 'Time Selected: ${selectedTime!.format(context)}',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            SizedBox(height: 20),
+            Column(
+              children: days.keys.map((String key) {
+                return CheckboxListTile(
+                  title: Text(key),
+                  value: days[key],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      days[key] = value ?? false;
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+            Spacer(),
+            ElevatedButton(
+              onPressed: _scheduleNotification,
+              style: ElevatedButton.styleFrom(
+                // primary: Color(0xFF2E3B4B),
+                // onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+              ),
+              child: Text(
+                "Add Reminder",
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
         ),
       ),
     );

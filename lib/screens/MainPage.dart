@@ -17,7 +17,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 String fq = "";
 String quote = '';
 String author = '';
+String cat = '';
 List<String> favoriteQuotes = [];
+String category = 'inspirational';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -51,7 +53,6 @@ class _MainPageState extends State<MainPage> {
       isLoading = true;
     });
 
-    final String category = 'inspirational';
     final String apiKey = 'k5YwnsfH2bYVbHaB3fEDsg==KLeGv9AxjJNj4Jam';
 
     try {
@@ -77,6 +78,7 @@ class _MainPageState extends State<MainPage> {
             isLoading = false;
             quote = responseData[0]['quote'];
             author = responseData[0]['author'];
+            cat = responseData[0]['category'];
           });
         } else {
           setState(() {
@@ -108,59 +110,65 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _addToFavorites() async {
-    if (quote.isNotEmpty && !favoriteQuotes.contains(quote)) {
-      if (!quote.contains('Failed to load quotes') &&
-          !quote.contains('Failed to load quotes (timeout)') &&
-          !quote.contains('No internet connection') &&
-          !quote.contains('Error') &&
-          !author.contains('Failed to load author') &&
-          !author.contains('Failed to load author (timeout)') &&
-          !author.contains('No internet connection') &&
-          !author.contains('Error')) {
-        setState(() {
-          !favoriteQuotes.contains(quote + author);
-          favoriteQuotes.add(quote + author);
-          favoriteQuotes = [...favoriteQuotes, quote, author];
-          Provider.of<FavoriteQuotes>(context, listen: false)
-              .add(quote + author);
-        });
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setStringList('favoriteQuotes', favoriteQuotes);
-        // snack bar message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Quote added to favorites!'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      } else if (favoriteQuotes.contains(quote)) {
-        // If the quote is already in favorites, show a snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Quote already in favorites!'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Error: Cannot add this quote to favorites!'),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      }
-    } else {
+    if (quote.isEmpty || author.isEmpty) {
+      // Handle case where quote or author is empty
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Quote is invalid or already in favorites!'),
+          content: Text('Invalid quote or author!'),
           duration: Duration(seconds: 1),
         ),
       );
+      return;
     }
+
+    final quoteWithAuthor = '$quote$author';
+
+    if (favoriteQuotes.contains(quoteWithAuthor)) {
+      // If the quote is already in favorites, show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Quote already in favorites!'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+
+    if (quote.contains('Failed to load quotes') ||
+        quote.contains('No internet connection') ||
+        author.contains('Failed to load author') ||
+        author.contains('No internet connection')) {
+      // Handle specific error conditions for quotes or authors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Error: quote is invalid or already in the favorites!'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+
+    // Add quote to favorites list
+    setState(() {
+      favoriteQuotes.add(quoteWithAuthor);
+      Provider.of<FavoriteQuotes>(context, listen: false).add(quoteWithAuthor);
+    });
+
+    // Save updated favoriteQuotes list to SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('favorite_quotes', favoriteQuotes);
+
+    // Show a snackbar indicating success
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text('Quote added to favorites!'),
+        duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   void _loadFavorites() async {
@@ -253,7 +261,7 @@ class _MainPageState extends State<MainPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
                                 child: Text(
-                                  "$quote\n$author",
+                                  "$quote\n$author\n$cat",
                                   style: GoogleFonts.nunito(
                                     fontSize: 24,
                                     color: Color(0xFFF7F2EF),

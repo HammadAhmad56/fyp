@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quoteza/auth/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Add_Removeuser.dart';
 import 'Userdetails.dart';
 import 'Settings.dart';
@@ -16,6 +19,19 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void signOut() async {
+    await _auth.signOut();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isLoggedIn');
+    await prefs.remove("key"); //ya key email ki ha
+    await prefs.remove("key2"); //ya key password ki ha
+    Navigator.push(
+      context as BuildContext,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,7 +111,7 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.of(context).pop(); // Close the drawer first
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Userdetails()),
+                  MaterialPageRoute(builder: (context) => UserDetails()),
                 );
               },
             ),
@@ -125,7 +141,33 @@ class _DashboardState extends State<Dashboard> {
             SizedBox(
               height: 100,
             ),
-            ElevatedButton(onPressed: () {}, child: Text('Logout'))
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: Text("Confirmation"),
+                            content: Text("Do you want to Logout??"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("No"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  signOut();
+                                },
+                                child: Text(
+                                  "Yes",
+                                  style: GoogleFonts.nunito(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ));
+                },
+                child: Text('Logout'))
           ],
         ),
       ),

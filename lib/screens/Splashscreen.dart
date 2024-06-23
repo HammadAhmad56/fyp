@@ -20,8 +20,8 @@ class _SplashscreenState extends State<Splashscreen> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final UserCredential userCredential =
           await _auth.signInWithEmailAndPassword(
-        email: prefs.getString("key") ?? "null",
-        password: prefs.getString("key2") ?? "null",
+        email: prefs.getString("email") ?? "null",
+        password: prefs.getString("password") ?? "null",
       );
 
       final User? user = userCredential.user;

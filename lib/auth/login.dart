@@ -133,8 +133,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (user != null) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
-        prefs.setString("Key", email);
-        prefs.setString("key2", password);
+        prefs.setString("email", email);
+        prefs.setString("password", password);
+        
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPage()),
@@ -193,9 +194,9 @@ class _LoginScreenState extends State<LoginScreen> {
               height: double.infinity,
               decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-            Color.fromARGB(255, 237, 205, 207),
-            Colors.white,
-            Color.fromARGB(255, 247, 220, 211)
+                Color.fromARGB(255, 237, 205, 207),
+                Colors.white,
+                Color.fromARGB(255, 247, 220, 211)
               ], begin: Alignment.bottomLeft)),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),

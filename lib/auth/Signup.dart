@@ -119,11 +119,34 @@ class _SignupState extends State<Signup> {
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('users').doc(uid);
 
-      // Create or update the document with the specified UID and user data
-      await userDocRef.set({
-        'name': _name, // Example data from your form fields
-        'email': _email, // Example data from your form fields
-      });
+      // Get the current user from FirebaseAuth
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        print('No authenticated user found.');
+        return;
+      }
+
+      // Check if the user document already exists
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (!userDoc.exists) {
+        // If the document does not exist, create it with additional data
+        await userDocRef.set({
+          'name': _name ?? 'No Name', // Example data from your form fields
+          'email': _email ?? 'No Email', // Example data from your form fields
+          'createdDate': FieldValue.serverTimestamp(),
+          'roles': {
+            'admin': false,
+            'user': true,
+          },
+        });
+      } else {
+        // If the document exists, update it with the new data
+        await userDocRef.update({
+          'name': _name ?? 'No Name', // Example data from your form fields
+          'email': _email ?? 'No Email', // Example data from your form fields
+        });
+      }
 
       print('User data saved successfully with UID: $uid');
     } catch (error) {

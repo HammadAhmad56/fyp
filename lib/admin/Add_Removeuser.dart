@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, unused_field
 import 'dart:ui';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/auth/login.dart';
@@ -139,65 +140,125 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
   }
 
   //********************************* start of the delete user login */
+  // final TextEditingController _emailController = TextEditingController();
+  // void removeUser(String emailOrUid) async {
+  //   // Implement your Firebase user removal logic here
+
+  //   try {
+  //     // Determine if input is an email or UID
+  //     User? user;
+  //     if (emailOrUid.contains('@')) {
+  //       // If input is email, fetch user by email
+
+  //       var result =
+  //           await FirebaseAuth.instance.fetchSignInMethodsForEmail(emailOrUid);
+  //       if (result.isEmpty) {
+  //         // User does not exist with this email
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: Text('User Not Found'),
+  //             content: Text('No user found with this email.'),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: Text('OK'),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //         return;
+  //       }
+  //       user = FirebaseAuth.instance.currentUser;
+  //     } else {
+  //       // If input is UID, fetch user by UID
+  //       user = await FirebaseAuth.instance.currentUser!;
+  //       user.delete();
+  //     }
+
+  //     // Delete the user
+  //     await user!.delete();
+
+  //     // Show success message
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Text('User Removed'),
+  //         content: Text('User removed successfully.'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     // Show error message if user removal fails
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Text('Error'),
+  //         content: Text('Failed to remove user: $e'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('OK'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  // }
   final TextEditingController _emailController = TextEditingController();
   void removeUser(String emailOrUid) async {
-    // Implement your Firebase user removal logic here
-
     try {
-      // Determine if input is an email or UID
-      User? user;
-      if (emailOrUid.contains('@')) {
-        // If input is email, fetch user by email
+      final HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('deleteUser');
+      final response = await callable.call(<String, dynamic>{
+        'emailOrUid': emailOrUid,
+      });
 
-        var result =
-            await FirebaseAuth.instance.fetchSignInMethodsForEmail(emailOrUid);
-        if (result.isEmpty) {
-          // User does not exist with this email
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('User Not Found'),
-              content: Text('No user found with this email.'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          );
-          return;
-        }
-        user = FirebaseAuth.instance.currentUser;
+      if (response.data['success'] == true) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('User Removed'),
+            content: Text('User removed successfully.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       } else {
-        // If input is UID, fetch user by UID
-        user = await FirebaseAuth.instance.currentUser!;
-        user.delete();
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to remove user: ${response.data['error']}'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       }
-
-      // Delete the user
-      await user!.delete();
-
-      // Show success message
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('User Removed'),
-          content: Text('User removed successfully.'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
     } catch (e) {
-      // Show error message if user removal fails
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -243,7 +304,7 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
             style: GoogleFonts.nunito(),
           ),
         ),
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFF7F2EF),
         body: Container(
           height: double.infinity,
@@ -253,140 +314,190 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
             Colors.white,
             Color.fromARGB(255, 247, 220, 211)
           ], begin: Alignment.bottomLeft)),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Enter the information to add users",
-                      style: GoogleFonts.nunito(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54)),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    onChanged: (value) => _name = value.trim(),
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      hintText: "Name",
-                      prefixIcon: Icon(Icons.account_circle),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    validator: _validateName,
-                    onSaved: (value) => _name = value!,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    onChanged: (value) => _email = value.trim(),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: "Email",
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    validator: (value) => _validateEmail(value),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onSaved: (value) => _email = value!,
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    onChanged: (value) => _password = value,
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: scureText,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          scureText ? Icons.visibility_off : Icons.visibility,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Enter the information to add users",
+                        style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54)),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      onChanged: (value) => _name = value.trim(),
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        hintText: "Name",
+                        prefixIcon: Icon(Icons.account_circle),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            scureText = !scureText;
-                          });
-                        },
                       ),
-                      hintText: "Password",
-                      prefixIcon: Icon(Icons.key_rounded),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      validator: _validateName,
+                      onSaved: (value) => _name = value!,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password is Required";
-                      }
-                      if (_validatePassword(value) != null) {
-                        return _validatePassword(value);
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    controller: confirmPasswordController,
-                    validator: (value) =>
-                        _validateConfirmPassword(value, _password),
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: confirmscureText,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          confirmscureText
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                    SizedBox(height: 10),
+                    TextFormField(
+                      onChanged: (value) => _email = value.trim(),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        hintText: "Email",
+                        prefixIcon: Icon(Icons.email_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            confirmscureText = !confirmscureText;
-                          });
-                        },
                       ),
-                      hintText: "Confirm Password",
-                      prefixIcon: Icon(Icons.key_rounded),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      validator: (value) => _validateEmail(value),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onSaved: (value) => _email = value!,
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      onChanged: (value) => _password = value,
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: scureText,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            scureText ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              scureText = !scureText;
+                            });
+                          },
+                        ),
+                        hintText: "Password",
+                        prefixIcon: Icon(Icons.key_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is Required";
+                        }
+                        if (_validatePassword(value) != null) {
+                          return _validatePassword(value);
+                        }
+                        return null;
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: confirmPasswordController,
+                      validator: (value) =>
+                          _validateConfirmPassword(value, _password),
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: confirmscureText,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            confirmscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              confirmscureText = !confirmscureText;
+                            });
+                          },
+                        ),
+                        hintText: "Confirm Password",
+                        prefixIcon: Icon(Icons.key_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isFormValid()
-                          ? () {
-                              if (_formKey.currentState!.validate()) {
-                                registeruser(); // Call _registerUser function if form is valid
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _isFormValid()
+                            ? () {
+                                if (_formKey.currentState!.validate()) {
+                                  registeruser(); // Call _registerUser function if form is valid
+                                }
                               }
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                        foregroundColor: Colors.white,
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text("Add User"),
                       ),
-                      child: Text("Add User"),
                     ),
-                  ),
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Email or UID',
+                    Divider(),
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      removeUser(_emailController.text.trim());
-                    },
-                    child: Text('Remove User'),
-                  ),
-                ],
+                    Text("Enter the information to remove users",
+                        style: GoogleFonts.nunito(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54)),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: "Email or UID",
+                        prefixIcon: Icon(Icons.person_remove_alt_1_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text("Alert‼"),
+                                    content: Text(
+                                        "Do you want to remove the user!?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("No"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          removeUser(
+                                              _emailController.text.trim());
+                                        },
+                                        child: Text(
+                                          "Yes",
+                                          style: GoogleFonts.nunito(
+                                              color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('Remove User'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
