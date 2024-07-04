@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quoteza/admin/Dashboard.dart';
 import 'package:quoteza/auth/Signup.dart';
 import '../screens/MainPage.dart';
 import 'forgotpassword.dart';
@@ -118,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
       emailError = null;
       passwordError = null;
     });
+
     try {
       final String email = emailController.text.trim();
       final String password = passwordController.text.trim();
@@ -135,13 +138,56 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setBool('isLoggedIn', true);
         prefs.setString("email", email);
         prefs.setString("password", password);
-        
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MainPage()),
-        );
-        // Navigate to another screen after successful login
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnotherScreen()));
+
+        // Fetch user role from Firestore or another source
+        DocumentSnapshot userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        bool isAdmin = userData.exists && userData['roles']['admin'] == true;
+        bool isUser = userData.exists && userData['roles']['user'] == true;
+
+        if (isAdmin) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Dashboard()),
+          );
+        } else if (isUser) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MainPage()),
+          );
+        } else {
+          print('Invalid role set for user.');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  "Failed to Login",
+                  style: GoogleFonts.nunito(),
+                ),
+                content: Text(
+                  "Invalid Email or password",
+                  style: GoogleFonts.nunito(),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      "OK",
+                      style: GoogleFonts.nunito(),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+          // Handle case where neither admin nor user roles are set
+        }
       }
     } catch (e) {
       showDialog(

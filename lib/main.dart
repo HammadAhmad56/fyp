@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:quoteza/admin/Dashboard.dart';
 import 'screens/P-info.dart';
@@ -80,6 +81,9 @@ class _MyAppState extends State<MyApp> {
       create: (context) => FavoriteQuotes(),
       child: MaterialApp(
         theme: ThemeData(
+          textTheme: GoogleFonts.nunitoTextTheme(
+            Theme.of(context).textTheme,
+          ),
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFF7F2EF)),
           primaryColor: Color(0xFFF7F2EF),
           useMaterial3: true,

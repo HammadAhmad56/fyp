@@ -6,14 +6,14 @@ import 'package:quoteza/admin/NotificationsSettings.dart';
 import 'package:quoteza/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+class Settingsscreen extends StatefulWidget {
+  const Settingsscreen({Key? key}) : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Settingsscreen> createState() => _SettingsscreenState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsscreenState extends State<Settingsscreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void signOut() async {

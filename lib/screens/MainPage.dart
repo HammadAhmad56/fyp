@@ -138,6 +138,10 @@ class _MainPageState extends State<MainPage> {
 
     if (quote.contains('Failed to load quotes') ||
         quote.contains('No internet connection') ||
+        quote.contains('No internet connection') ||
+        author.contains('No internet connection') ||
+        quote.contains('Failed to load quotes (timeout)') ||
+        author.contains('Failed to load author (timeout)') ||
         author.contains('Failed to load author') ||
         author.contains('No internet connection')) {
       // Handle specific error conditions for quotes or authors

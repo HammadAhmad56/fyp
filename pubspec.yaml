@@ -60,6 +60,7 @@ dependencies:
   fl_chart: ^0.68.0
   easy_autocomplete: ^1.6.0
   image_picker: ^1.1.2
+  firebase_storage: ^11.7.7
 
 dev_dependencies:
   flutter_test:

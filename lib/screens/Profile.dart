@@ -83,8 +83,10 @@ class _ProfileState extends State<Profile> {
   //  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late String _userName = '';
-  late String _userEmail = '';
+  late String _userName = 'user name not found';
+  late String _userEmail = 'user email not found';
+  String _userImageUrl =
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzEvDP4hsG9teJH2QXf7iam7hXRsj4ZWL09Ohk2XNXjDVlXPTT0OBdpT5T0A&s';
 
   @override
   void initState() {
@@ -100,6 +102,7 @@ class _ProfileState extends State<Profile> {
       setState(() {
         _userName = userData['name'] ?? 'Username not found';
         _userEmail = userData['email'] ?? 'Email not found';
+        _userImageUrl = userData['profileImage'] ?? _userImageUrl;
       });
     }
   }
@@ -154,7 +157,7 @@ class _ProfileState extends State<Profile> {
                     CircleAvatar(
                       radius: 25,
                       backgroundColor: Colors.grey,
-                      backgroundImage: AssetImage("assets/images/user.png"),
+                      backgroundImage: NetworkImage(_userImageUrl),
                     ),
                     SizedBox(width: 10),
                     Column(
@@ -735,7 +738,7 @@ class _ProfileState extends State<Profile> {
                                 offset: Offset(0, 3),
                               )
                             ],
-                            Icons.person_off_rounded,
+                            Icons.person_remove_alt_1_rounded,
                             size: 24,
                             color: Colors.grey,
                           ),
@@ -753,72 +756,6 @@ class _ProfileState extends State<Profile> {
                         icon: Icon(Icons.arrow_forward_ios_rounded,
                             color: Colors.black, size: 20)),
                   ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Dashboard()),
-                  );
-                },
-                child: Container(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          alignment: Alignment.centerLeft,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 25,
-                            child: Icon(
-                              shadows: [
-                                Shadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                )
-                              ],
-                              Icons.assignment,
-                              size: 24,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'Admin',
-                        style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.w500, fontSize: 16),
-                      ),
-                      Spacer(),
-                      IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Dashboard()),
-                            );
-                          },
-                          icon: Icon(Icons.arrow_forward_ios_rounded,
-                              color: Colors.black, size: 20)),
-                    ],
-                  ),
                 ),
               ),
             ],

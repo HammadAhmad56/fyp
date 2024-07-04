@@ -21,6 +21,8 @@ class _EditprofileState extends State<Editprofile> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   File? _image; // Holds the selected image
+  String _userImageUrl =
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzEvDP4hsG9teJH2QXf7iam7hXRsj4ZWL09Ohk2XNXjDVlXPTT0OBdpT5T0A&s';
 
   @override
   void initState() {
@@ -46,8 +48,11 @@ class _EditprofileState extends State<Editprofile> {
 
         if (userSnapshot.exists) {
           setState(() {
-            _nameController.text = userSnapshot['name'] ?? '';
-            _emailController.text = userSnapshot['email'] ?? '';
+            _nameController.text =
+                userSnapshot['name'] ?? 'user name not found';
+            _emailController.text =
+                userSnapshot['email'] ?? 'user email not found';
+            _userImageUrl = userSnapshot['profileImage'] ?? _userImageUrl;
           });
         }
       }
@@ -135,10 +140,7 @@ class _EditprofileState extends State<Editprofile> {
                   children: [
                     CircleAvatar(
                       radius: 70,
-                      backgroundImage: _image != null
-                          ? FileImage(_image!)
-                          : AssetImage('assets/images/user.png')
-                              as ImageProvider<Object>,
+                      backgroundImage: NetworkImage(_userImageUrl),
                     ),
                     Positioned(
                       bottom: 0,
