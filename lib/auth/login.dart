@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/admin/Dashboard.dart';
@@ -354,27 +355,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(9),
-                          child: ElevatedButton(
-                            onPressed: isButtonEnabled
-                                ? () {
-                                    signInWithEmailAndPassword();
-                                  }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                              foregroundColor: Colors.white,
-                            ),
-                            child: Text(
-                              "Login",
-                              style: GoogleFonts.nunito(),
-                            ),
-                          ),
+                          child: isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : ElevatedButton(
+                                  onPressed: isButtonEnabled
+                                      ? signInWithEmailAndPassword
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Color.fromRGBO(46, 59, 75, 1),
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: Text(
+                                    "Login",
+                                    style: GoogleFonts.nunito(),
+                                  ),
+                                ),
                         ),
-                        if (isLoading)
-                          Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator(),
-                          ),
                         Container(
                             height: 20,
                             // color: Colors.red,
@@ -494,7 +491,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ))
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

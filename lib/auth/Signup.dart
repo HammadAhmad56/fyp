@@ -66,12 +66,25 @@ class _SignupState extends State<Signup> {
   }
 
   void _showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 1),
-        backgroundColor: Colors.red,
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Error"),
+          content: Text(
+            "Apple Login is not available on andriod device ",
+            style: GoogleFonts.nunito(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -357,8 +370,10 @@ class _SignupState extends State<Signup> {
                     InkWell(
                       onTap: () async {
                         if (await _isAndroidDevice()) {
-                          _showMessage(context,
-                              "Apple Login is not available on Android");
+                          _showMessage(
+                            context,
+                            "Apple Login is not available on Android",
+                          );
                         } else {}
                         ;
                       },
@@ -376,7 +391,10 @@ class _SignupState extends State<Signup> {
                             SizedBox(
                               width: 10,
                             ),
-                            Icon(Icons.apple_rounded),
+                            Icon(
+                              Icons.apple_rounded,
+                              size: 32,
+                            ),
                             Text("\t\tLogin with Apple"),
                           ],
                         ),
