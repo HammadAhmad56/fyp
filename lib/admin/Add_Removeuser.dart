@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, unused_field
 import 'dart:ui';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,7 +13,6 @@ class AddRemoveuser extends StatefulWidget {
   @override
   State<AddRemoveuser> createState() => _AddRemoveuserState();
 }
-
 class _AddRemoveuserState extends State<AddRemoveuser> {
   bool scureText = true;
   bool confirmscureText = true;
@@ -71,7 +69,6 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
   Future<void> registeruser() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       try {
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -83,12 +80,6 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
         print('User created: ${user?.uid}');
         user!.displayName;
         await _saveUserData(user.uid.toString());
-        // _saveUserData(user!.uid.toString());
-        // Navigate to login screen after successful AddRemoveuser
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => LoginScreen()),
-        // );
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -127,11 +118,34 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('users').doc(uid);
 
-      // Create or update the document with the specified UID and user data
-      await userDocRef.set({
-        'name': _name, // Example data from your form fields
-        'email': _email, // Example data from your form fields
-      });
+      // Get the current user from FirebaseAuth
+      User? currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        print('No authenticated user found.');
+        return;
+      }
+
+      // Check if the user document already exists
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (!userDoc.exists) {
+        // If the document does not exist, create it with additional data
+        await userDocRef.set({
+          'name': _name ?? 'No Name', // Example data from your form fields
+          'email': _email ?? 'No Email', // Example data from your form fields
+          'createdDate': FieldValue.serverTimestamp(),
+          'roles': {
+            'admin': false,
+            'user': true,
+          },
+        });
+      } else {
+        // If the document exists, update it with the new data
+        await userDocRef.update({
+          'name': _name ?? 'No Name', // Example data from your form fields
+          'email': _email ?? 'No Email', // Example data from your form fields
+        });
+      }
 
       print('User data saved successfully with UID: $uid');
     } catch (error) {
@@ -283,6 +297,7 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           surfaceTintColor: Color.fromARGB(255, 247, 220, 211),
           backgroundColor: Color.fromARGB(255, 247, 220, 211),
