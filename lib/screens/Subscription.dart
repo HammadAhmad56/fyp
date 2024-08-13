@@ -77,7 +77,7 @@ class _SubscriptionState extends State<Subscription> {
                   width: 10,
                 ),
                 Text(
-                  "2000+motivational quotes to deliver a daily \ndose of hope, inspiration, positivity, and a little \nbit of magic into your life.",
+                  "2000+ motivational quotes to deliver a daily \ndose of hope, inspiration, positivity, and a little \nbit of magic into your life.",
                   style: GoogleFonts.nunito(),
                 ),
               ],
@@ -238,10 +238,16 @@ class _SubscriptionState extends State<Subscription> {
                     "Totally free for 3 days. And enjoy all the quotes then Rs 3,050.00 will be charged annually or Rs 2800.00/month. You can cancel it anytime. ")),
             ElevatedButton(
                 onPressed: () async {
-                  // final paymentMethod = await Stripe.instance.createPaymentMethod(
-                  //     params: const PaymentMethodParams.card(
-                  //         paymentMethodData: PaymentMethodData()));
-                  await makePayment();
+                  print('Subscribe button pressed');
+                  try {
+                    final paymentMethod = await Stripe.instance.createPaymentMethod(
+                        params: const PaymentMethodParams.card(
+                            paymentMethodData: PaymentMethodData()));
+                    print('Payment method created: $paymentMethod');
+                    await makePayment();
+                  } catch (e) {
+                    print('Error creating payment method: $e');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey.shade800,
@@ -265,37 +271,35 @@ class _SubscriptionState extends State<Subscription> {
         print('Failed to create payment intent');
         return;
       }
+      print('Payment Intent created: $paymentIntentData');
       await Stripe.instance
           .initPaymentSheet(
               paymentSheetParameters: SetupPaymentSheetParameters(
                   setupIntentClientSecret:
                       'pk_test_51PPjIS2L9yyHmmzwVaK6GETJylZxloBOVtA7tpnJFvrP66aSnPgyCNJphE2xVYuoy5CwiLFI4KbNBPHlwbupt4cl00bFF3GsiR',
                   paymentIntentClientSecret: paymentIntentData![
-                      'sk_test_51PPjIS2L9yyHmmzwATO8tPiJFzCptZjZSgdbztH8PGPN7kIE4hfGebykZplbshXFKU7mr5RIM2bXYpEu1RaVCypV00ADlq0ieu'],
-                  //applePay: PaymentSheetApplePay.,
-                  //googlePay: true,
-                  //testEnv: true,
+                      'client_secret'],
                   customFlow: true,
-                  // style: ThemeMode.dark,
-                  // merchantCountryCode: 'US',
                   merchantDisplayName: 'Hammad'))
-          .then((value) {});
+          .then((value) {
+            print('Payment sheet initialized');
+          });
 
       ///now finally display payment sheeet
       displayPaymentSheet();
     } catch (e, s) {
-      print('Payment exception:$e$s');
+      print('Payment exception: $e$s');
     }
   }
 
-  Future <void>displayPaymentSheet() async {
+  Future<void> displayPaymentSheet() async {
     try {
       await Stripe.instance
-          .presentPaymentSheet(             )
+          .presentPaymentSheet()
           .then((newValue) {
         print('payment intent${paymentIntentData!['id']}');
         print(
-            'payment intent${paymentIntentData!['sk_test_51PPjIS2L9yyHmmzwATO8tPiJFzCptZjZSgdbztH8PGPN7kIE4hfGebykZplbshXFKU7mr5RIM2bXYpEu1RaVCypV00ADlq0ieu']}');
+            'payment intent${paymentIntentData!['client_secret']}');
         print('payment intent${paymentIntentData!['amount']}');
         print('payment intent$paymentIntentData');
         //orderPlaceApi(paymentIntentData!['id'].toString());
@@ -332,10 +336,11 @@ class _SubscriptionState extends State<Subscription> {
         body: body,
         headers: {
           'Authorization':
-              'Bearer sk_test_51PPjIS2L9yyHmmzwATO8tPiJFzCptZjZSgdbztH8PGPN7kIE4hfGebykZplbshXFKU7mr5RIM2bXYpEu1RaVCypV00ADlq0ieu',
+                'Bearer sk_test_51MtZ0fHHWmQC05Mfmf2b75TUfgWKUZZ1bKdAopFlDbFqlLnt2SlFzM04vUvQrzI1qDKIzqxgxOOIhbrNjP1rbQSp004wSAoHk9',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       );
+      print('Payment intent response: ${response.body}');
       return jsonDecode(response.body);
     } catch (err) {
       print('Error charging user: ${err.toString()}');
@@ -343,7 +348,7 @@ class _SubscriptionState extends State<Subscription> {
     }
   }
 
-  calculateAmount(String amount) {
+  String calculateAmount(String amount) {
     final a = (int.parse(amount)) * 100;
     return a.toString();
   }

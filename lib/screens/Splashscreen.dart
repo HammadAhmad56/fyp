@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quoteza/admin/Dashboard.dart';
 import 'MainPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quoteza/auth/login.dart';
@@ -47,26 +48,42 @@ class _SplashscreenState extends State<Splashscreen> {
     }
   }
 
-  void autologin() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool login = prefs.getBool('isLoggedIn') ?? false;
-    Future.delayed(Duration(seconds: 3), () {
-      // Navigate to the main screen after the delay
-      if (login == true) {
-        Navigator.push(
+ void autologin() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  String role = prefs.getString('role') ?? 'user'; // Default to 'user' if no role is found
+
+  // Add a delay for demo purposes (e.g., splash screen)
+  Future.delayed(Duration(seconds: 3), () {
+    if (isLoggedIn) {
+      // Navigate based on user role
+      if (role == 'admin') {
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainPage()),
+          MaterialPageRoute(builder: (context) => Dashboard()), // Navigate to admin dashboard
+        );
+      } else if (role == 'user') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MainPage()), // Navigate to user main page
         );
       } else {
-        Navigator.push(
+        // Handle unexpected role value
+        print('Unknown role: $role');
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  LoginScreen()), // Replace LoginScreen() with main screen
+          MaterialPageRoute(builder: (context) => LoginScreen()), // Fallback to login screen
         );
       }
-    });
-  }
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()), // Navigate to login screen if not logged in
+      );
+    }
+  });
+}
+
 
   @override
   void initState() {

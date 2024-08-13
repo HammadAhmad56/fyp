@@ -148,6 +148,8 @@ class _SignupState extends State<Signup> {
           'name': _name ?? 'No Name', // Example data from your form fields
           'email': _email ?? 'No Email', // Example data from your form fields
           'createdDate': FieldValue.serverTimestamp(),
+          'profileImage':
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzEvDP4hsG9teJH2QXf7iam7hXRsj4ZWL09Ohk2XNXjDVlXPTT0OBdpT5T0A&s',
           'roles': {
             'admin': false,
             'user': true,

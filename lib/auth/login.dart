@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quoteza/admin/Dashboard.dart';
 import 'package:quoteza/auth/Signup.dart';
 import '../screens/MainPage.dart';
@@ -149,15 +150,21 @@ class _LoginScreenState extends State<LoginScreen> {
         bool isAdmin = userData.exists && userData['roles']['admin'] == true;
         bool isUser = userData.exists && userData['roles']['user'] == true;
 
+        // Store user role in SharedPreferences
         if (isAdmin) {
+          await prefs.setString('role', 'admin');
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => Dashboard()),
+            MaterialPageRoute(
+                builder: (context) =>
+                    Dashboard()), // Navigate to admin dashboard
           );
         } else if (isUser) {
+          await prefs.setString('role', 'user');
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MainPage()),
+            MaterialPageRoute(
+                builder: (context) => MainPage()), // Navigate to user main page
           );
         } else {
           print('Invalid role set for user.');
@@ -224,6 +231,32 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
         isButtonEnabled = true;
       });
+    }
+  }
+
+// google logins
+   Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        return null; // The user canceled the sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      return userCredential.user;
+    } catch (e) {
+      print(e.toString());
+      return null;
     }
   }
 
@@ -400,7 +433,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             )),
                         SizedBox(height: 12),
                         InkWell(
-                          onTap: () {},
+                          onTap: () async {
+                            User? user = await signInWithGoogle();
+                            if (user != null) {
+                              print('Signed in as ${user.displayName}');
+                              // Navigate to your next screen here
+                            } else {
+                              print('Sign in failed');
+                            }
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),

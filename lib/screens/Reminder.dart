@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:convert';
+import 'dart:async'; // Import the Timer class
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/screens/Addreminder.dart';
@@ -20,11 +21,19 @@ class _ReminderState extends State<Reminder> {
   List<Map<String, dynamic>> scheduledReminders = [];
   final String _prefsKey = 'reminders';
   bool _isLoading = true;
+  Timer? _reminderTimer;
 
   @override
   void initState() {
     super.initState();
     _loadRemindersFromPrefs();
+    _startReminderTimer();
+  }
+
+  @override
+  void dispose() {
+    _reminderTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadRemindersFromPrefs() async {
@@ -135,6 +144,23 @@ class _ReminderState extends State<Reminder> {
     }
   }
 
+  void _startReminderTimer() {
+    _reminderTimer = Timer.periodic(Duration(minutes: 1), (timer) {
+      _removeExpiredReminders();
+    });
+  }
+
+  void _removeExpiredReminders() {
+    final now = DateTime.now();
+    setState(() {
+      scheduledReminders.removeWhere((reminder) {
+        final time = reminder['time'] as DateTime?;
+        return time != null && time.isBefore(now);
+      });
+      _saveRemindersToPrefs(scheduledReminders);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,17 +211,6 @@ class _ReminderState extends State<Reminder> {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SharedPreferencesViewer(),
-                            ),
-                          );
-                        },
-                        child: Text("View SharedPreferences"),
-                      ),
                       SizedBox(height: 20),
                       Text(
                         'Set up daily reminders to make your motivational quotes fit your routine',
@@ -213,9 +228,9 @@ class _ReminderState extends State<Reminder> {
                                 itemCount: scheduledReminders.length,
                                 itemBuilder: (context, index) {
                                   final reminder = scheduledReminders[index];
-                                  final time = reminder['time'] as DateTime;
-                                  final daily = reminder['daily'] as bool;
-                                  final day = reminder['day'] as String;
+                                  final time = reminder['time'] as DateTime?;
+                                  final daily = reminder['daily'] as bool?;
+                                  final day = reminder['day'] as String?;
                                   return ListTile(
                                     title: Text(
                                       'Reminder ${index + 1}',
@@ -225,7 +240,7 @@ class _ReminderState extends State<Reminder> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      '${time.hour}:${time.minute} - ${daily ? "Everyday" : day}',
+                                      '${time?.hour ?? 0}:${time?.minute ?? 0} - ${daily == true ? "Everyday" : (day ?? "N/A")}',
                                       style: GoogleFonts.nunito(
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,

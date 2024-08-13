@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quoteza/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,6 +52,27 @@ class _DashboardState extends State<Dashboard> {
     });
 
     return {'admin': adminCount, 'user': userCount};
+  }
+
+  void initState() {
+    super.initState();
+    // Lock orientation to portrait mode
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    // Unlock orientation when the screen is disposed
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
   }
 
   @override
@@ -117,7 +139,7 @@ class _DashboardState extends State<Dashboard> {
               ),
               ListTile(
                 leading: Icon(Icons.person_add_alt_1),
-                title: Text('Add OR Remove User'),
+                title: Text('User Management'),
                 onTap: () {
                   Navigator.of(context).pop(); // Close the drawer first
                   Navigator.push(
@@ -137,17 +159,17 @@ class _DashboardState extends State<Dashboard> {
                   );
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.supervisor_account),
-                title: Text('User Management'),
-                onTap: () {
-                  Navigator.of(context).pop(); // Close the drawer first
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Usermanagement()),
-                  );
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.supervisor_account),
+              //   title: Text('User Management'),
+              //   onTap: () {
+              //     Navigator.of(context).pop(); // Close the drawer first
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => Usermanagement()),
+              //     );
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Settings'),

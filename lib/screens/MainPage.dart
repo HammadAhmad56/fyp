@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_declarations, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -21,6 +20,8 @@ String cat = '';
 List<String> favoriteQuotes = [];
 String category = 'inspirational';
 
+ValueNotifier<String> categoryNotifier = ValueNotifier<String>('inspirational');
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -40,11 +41,14 @@ class _MainPageState extends State<MainPage> {
     _timer = Timer.periodic(Duration(seconds: 30), (timer) {
       _fetchAndSetQuote();
     });
+
+    categoryNotifier.addListener(_fetchAndSetQuote);
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    categoryNotifier.removeListener(_fetchAndSetQuote);
     super.dispose();
   }
 
@@ -67,7 +71,8 @@ class _MainPageState extends State<MainPage> {
       }
 
       final response = await http.get(
-        Uri.parse('https://api.api-ninjas.com/v1/quotes?category=$category'),
+        Uri.parse(
+            'https://api.api-ninjas.com/v1/quotes?category=${categoryNotifier.value}'),
         headers: {'X-Api-Key': apiKey},
       ).timeout(Duration(seconds: 30));
 
@@ -264,12 +269,36 @@ class _MainPageState extends State<MainPage> {
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
-                                child: Text(
-                                  "$quote\n$author\n$cat",
-                                  style: GoogleFonts.nunito(
-                                    fontSize: 24,
-                                    color: Color(0xFFF7F2EF),
-                                    fontWeight: FontWeight.bold,
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "$quote\n",
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 24,
+                                          color: Color.fromARGB(255, 255, 255,
+                                              255), // Change color for quote
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: "$author\n",
+                                        style: GoogleFonts.nunito(
+                                            fontSize: 24,
+                                            color: Color.fromARGB(171, 241, 179,
+                                                132), // Change color for author
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: "$cat",
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 24,
+                                          color: Color.fromARGB(255, 78, 243,
+                                              18), // Change color for cat
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
@@ -352,30 +381,6 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ],
                 ),
-                // child: RichText(
-                //   text: TextSpan(spellOut: true,
-                //     text: '$quote ', // First part of the text
-                //     style: GoogleFonts.nunito(
-                //       fontSize: 24,
-                //       color: Color(0xFFF7F2EF),
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   //    overflow: TextOverflow.ellipsis,
-                //   // textAlign: TextAlign.center,
-                //   // maxLines: 5,
-                //     children: <TextSpan>[
-                //       TextSpan(
-                //         text:
-                //             '$author', // Second part of the text with a different color
-                //          style: GoogleFonts.nunito(
-                //       fontSize: 24,
-                //       color: Color.fromARGB(255, 230, 9, 24),
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //       ),
-                //     ],
-                //   ),
-                // )
               ],
             ),
           ),

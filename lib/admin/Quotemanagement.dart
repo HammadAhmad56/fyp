@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:quoteza/admin/Dashboard.dart';
+import 'package:quoteza/screens/MainPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
+import 'package:quoteza/main.dart';
 
 class Quotemanagement extends StatefulWidget {
   const Quotemanagement({super.key});
@@ -85,7 +84,7 @@ class _QuotemanagementState extends State<Quotemanagement> {
     'Success',
   ];
 
-  String category = 'Inspirational'; // Initial value set to 'Age'
+  String category = 'Inspirational';
   final TextEditingController _controller =
       TextEditingController(text: 'Inspirational');
 
@@ -124,15 +123,17 @@ class _QuotemanagementState extends State<Quotemanagement> {
         category = value;
       });
     }
-    _saveCategory(category); // Save the valid category
+    _saveCategory(category);
+    categoryNotifier.value = category; // Update the ValueNotifier
   }
 
   void _clearCategory() {
     _controller.clear();
     setState(() {
-      category = 'Inspirational'; // Reset to the initial value
+      category = 'Inspirational';
     });
-    _saveCategory('Inspirational'); // Save the initial value
+    _saveCategory('Inspirational');
+    categoryNotifier.value = 'Inspirational'; // Update the ValueNotifier
   }
 
   @override
@@ -193,16 +194,11 @@ class _QuotemanagementState extends State<Quotemanagement> {
                     fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-          SizedBox(
-            height: 10,
-          ),
+          SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Close the drawer first
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Dashboard()),
-              );
+              _validateCategory(_controller.text);
+              Navigator.of(context).pop();
             },
             child: Text("Save"),
           ),

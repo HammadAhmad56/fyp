@@ -18,9 +18,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Stripe with your publishable key
-  // Stripe.publishableKey =
-  //     "pk_test_51PPjIS2L9yyHmmzwVaK6GETJylZxloBOVtA7tpnJFvrP66aSnPgyCNJphE2xVYuoy5CwiLFI4KbNBPHlwbupt4cl00bFF3GsiR";
-  // Stripe.instance.applySettings();
+  Stripe.publishableKey =
+      "pk_test_51PPjIS2L9yyHmmzwVaK6GETJylZxloBOV"
+          "tA7tpnJFvrP66aSnPgyCNJphE2xVYuoy5CwiLFI4"
+          "KbNBPHlwbupt4cl00bFF3GsiR";
+  Stripe.instance.applySettings();
   // initialize firebase
   await Firebase.initializeApp(
     options: FirebaseOptions(
@@ -33,7 +35,8 @@ Future<void> main() async {
   );
 // one signal
   OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize("1d57a855-a394-49dc-837e-cdcd2d1e0ec5");
+  OneSignal.initialize
+    ("1d57a855-a394-49dc-837e-cdcd2d1e0ec5");
   OneSignal.Notifications.requestPermission(true);
   runApp(const MyApp());
 

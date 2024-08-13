@@ -297,7 +297,7 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         appBar: AppBar(
           surfaceTintColor: Color.fromARGB(255, 247, 220, 211),
           backgroundColor: Color.fromARGB(255, 247, 220, 211),
@@ -315,7 +315,7 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
           automaticallyImplyLeading: true,
           leadingWidth: 30,
           title: Text(
-            "Add Remove Users",
+            "Add Users",
             style: GoogleFonts.nunito(),
           ),
         ),
@@ -454,63 +454,63 @@ class _AddRemoveuserState extends State<AddRemoveuser> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text("Enter the information to remove users",
-                        style: GoogleFonts.nunito(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54)),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        hintText: "Email or UID",
-                        prefixIcon: Icon(Icons.person_remove_alt_1_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    title: Text("Alert‼"),
-                                    content: Text(
-                                        "Do you want to remove the user!?"),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text("No"),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          removeUser(
-                                              _emailController.text.trim());
-                                        },
-                                        child: Text(
-                                          "Yes",
-                                          style: GoogleFonts.nunito(
-                                              color: Colors.red),
-                                        ),
-                                      ),
-                                    ],
-                                  ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromRGBO(46, 59, 75, 1),
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Text('Remove User'),
-                      ),
-                    ),
+                    // Text("Enter the information to remove users",
+                    //     style: GoogleFonts.nunito(
+                    //         fontSize: 16,
+                    //         fontWeight: FontWeight.bold,
+                    //         color: Colors.black54)),
+                    // SizedBox(
+                    //   height: 10,
+                    // ),
+                    // TextField(
+                    //   controller: _emailController,
+                    //   decoration: InputDecoration(
+                    //     hintText: "Email or UID",
+                    //     prefixIcon: Icon(Icons.person_remove_alt_1_outlined),
+                    //     border: OutlineInputBorder(
+                    //       borderRadius: BorderRadius.circular(12),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 20),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       showDialog(
+                    //           context: context,
+                    //           builder: (context) => AlertDialog(
+                    //                 title: Text("Alert‼"),
+                    //                 content: Text(
+                    //                     "Do you want to remove the user!?"),
+                    //                 actions: [
+                    //                   TextButton(
+                    //                     onPressed: () {
+                    //                       Navigator.of(context).pop();
+                    //                     },
+                    //                     child: Text("No"),
+                    //                   ),
+                    //                   TextButton(
+                    //                     onPressed: () {
+                    //                       removeUser(
+                    //                           _emailController.text.trim());
+                    //                     },
+                    //                     child: Text(
+                    //                       "Yes",
+                    //                       style: GoogleFonts.nunito(
+                    //                           color: Colors.red),
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ));
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Color.fromRGBO(46, 59, 75, 1),
+                    //       foregroundColor: Colors.white,
+                    //     ),
+                    //     child: Text('Remove User'),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
